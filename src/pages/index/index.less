@@ -1,40 +1,473 @@
 .index {
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 14px;
   line-height: 1.4;
+  background-color: #f5f5f5;
+  min-height: 100vh;
 }
 
-.title {
-  font-size: 20px;
+/* 顶部Banner */
+.banner {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 0 0 12px 12px;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+}
+
+.banner-text {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: white;
+  font-size: 18px;
   font-weight: bold;
-  margin-bottom: 20px;
-  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.test-btn {
-  margin: 20px 0;
+/* 核心查询区域 */
+.search-container {
+  margin: 16px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.response {
-  margin-top: 20px;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: #f9f9f9;
+/* 当前地点 */
+.location-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.response-title {
-  font-weight: bold;
-  margin-bottom: 10px;
-  display: block;
+.location-text {
   font-size: 16px;
+  font-weight: 500;
+  color: #333;
 }
 
-.response-content {
+.location-icon {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 关键字搜索框 */
+.search-input-container {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.search-icon {
+  margin-right: 8px;
+  color: #999;
+}
+
+.search-input {
+  flex: 1;
   font-size: 14px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  font-family: 'Courier New', monospace;
   color: #333;
+  background: transparent;
+  padding: 4px 0;
+  outline: none;
+  border: none;
+  min-height: 20px;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+/* 日期选择框 */
+.date-container {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.date-icon {
+  margin-right: 8px;
+  color: #999;
+}
+
+.date-text {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+
+/* 筛选条件栏 */
+.filter-bar {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  border-top: 1px solid #f0f0f0;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.filter-item Text {
+  font-size: 14px;
+  color: #333;
+}
+
+.filter-arrow {
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+}
+
+/* 快捷标签区 */
+.tags-container {
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 8px 16px;
+  margin-right: 12px;
+  background-color: #f5f5f5;
+  border-radius: 16px;
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.tag:active {
+  background-color: #e0e0e0;
+}
+
+/* 查询按钮 */
+.search-button {
+  width: 100%;
+  height: 48px;
+  background-color: #1890ff;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+}
+
+.search-button:active {
+  background-color: #40a9ff;
+}
+
+/* 日历组件样式 */
+.calendar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.calendar-content {
+  width: 100%;
+  max-width: 600px;
+  background-color: white;
+  border-radius: 16px 16px 0 0;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.calendar-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.calendar-close {
+  font-size: 20px;
+  color: #999;
+  padding: 4px;
+}
+
+.calendar-quick-select {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.quick-select-title {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.quick-select-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.quick-select-btn {
+  flex: 1;
+  min-width: 70px;
+  padding: 8px 0;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+}
+
+.quick-select-btn:active {
+  background-color: #e0e0e0;
+}
+
+.calendar-body {
+  padding: 0;
+  min-height: 300px;
+}
+
+/* 完整日历样式 */
+.full-calendar {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 日历头部 */
+.calendar-header-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.month-nav-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #666;
+  padding: 0;
+}
+
+.current-month {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* 星期标题 */
+.week-header {
+  display: flex;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.week-day {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* 日期网格 */
+.date-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 1px;
+  background: #f0f0f0;
+  padding: 1px;
+}
+
+/* 日期单元格 */
+.date-cell {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  position: relative;
+}
+
+.date-text {
+  font-size: 14px;
+  color: #333;
+}
+
+/* 今天 */
+.today {
+  background: #e6f7ff;
+}
+
+.today .date-text {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+/* 入住日期 */
+.check-in {
+  background: #1890ff;
+}
+
+.check-in .date-text {
+  color: #fff;
+  font-weight: 500;
+}
+
+/* 离店日期 */
+.check-out {
+  background: #1890ff;
+}
+
+.check-out .date-text {
+  color: #fff;
+  font-weight: 500;
+}
+
+/* 日期范围内 */
+.in-range {
+  background: #e6f7ff;
+}
+
+/* 禁用日期 */
+.disabled {
+  background: #f5f5f5;
+}
+
+.disabled-text {
+  color: #999;
+}
+
+/* 月份外日期 */
+.other-month {
+  background: #fafafa;
+}
+
+.other-month .date-text {
+  color: #d9d9d9;
+}
+
+.calendar-range-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #f5f5f5;
+  border-top: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.range-info-item {
+  font-size: 14px;
+  color: #666;
+  flex: 1;
+  min-width: 100px;
+  text-align: center;
+}
+
+.calendar-footer {
+  display: flex;
+  padding: 16px 20px;
+  border-top: 1px solid #f0f0f0;
+  gap: 12px;
+}
+
+.calendar-cancel-btn {
+  flex: 1;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+.calendar-confirm-btn {
+  flex: 1;
+  padding: 12px;
+  background-color: #1890ff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  color: white;
+}
+
+.calendar-cancel-btn:active {
+  background-color: #e0e0e0;
+}
+
+.calendar-confirm-btn:active {
+  background-color: #40a9ff;
+}
+
+/* 响应式设计 */
+@media (max-width: 375px) {
+  .banner {
+    height: 150px;
+  }
+  
+  .banner-text {
+    font-size: 16px;
+  }
+  
+  .search-container {
+    margin: 12px;
+    padding: 16px;
+  }
+  
+  .calendar-container {
+    padding-bottom: 0;
+  }
+}
+
+@media (min-width: 414px) {
+  .banner {
+    height: 200px;
+  }
+  
+  .banner-text {
+    font-size: 20px;
+  }
+  
+  .calendar-container {
+    padding-bottom: 20px;
+  }
 }
