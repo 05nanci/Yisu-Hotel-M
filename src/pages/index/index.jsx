@@ -1,9 +1,11 @@
 import { View, Text, Button, Image, Input, ScrollView } from '@tarojs/components'
 import { useCallback, useState, useEffect } from 'react'
-import { request, getLocation, showModal, navigateTo } from '@tarojs/taro'
+import { request, getLocation, showModal, navigateTo, showToast, useRouter } from '@tarojs/taro'
+import { hotelApi, locationApi } from '../../services/api'
 import './index.less'
 
 export default function Index () {
+  const router = useRouter()
   // 状态管理
   const [currentCity, setCurrentCity] = useState('定位中...')
   const [keyword, setKeyword] = useState('')
@@ -12,6 +14,9 @@ export default function Index () {
   const [loading, setLoading] = useState(false)
   const [locationPermission, setLocationPermission] = useState(false)
   const [showCalendar, setShowCalendar] = useState(false)
+  const [showCitySelector, setShowCitySelector] = useState(false)
+  const [citySearchKeyword, setCitySearchKeyword] = useState('')
+  const [filteredCities, setFilteredCities] = useState([])
   
   // 日历状态
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear())
@@ -33,7 +38,15 @@ export default function Index () {
 
     setCheckInDate(formatDate(today))
     setCheckOutDate(formatDate(tomorrow))
-    getCurrentLocation()
+
+    // 获取路由参数
+    const params = router.params
+    if (params && params.city) {
+      console.log('从城市选择页返回，选择的城市:', params.city)
+      setCurrentCity(params.city)
+    } else {
+      getCurrentLocation()
+    }
   }, [])
 
   // 生成日历数据
@@ -106,18 +119,47 @@ export default function Index () {
     return `${year}-${month}-${day}`
   }, [])
 
+  // 计算住宿晚数
+  const calculateNights = useCallback((checkIn, checkOut) => {
+    if (!checkIn || !checkOut) return 0
+    
+    const startDate = new Date(checkIn)
+    const endDate = new Date(checkOut)
+    const timeDiff = endDate.getTime() - startDate.getTime()
+    const nightCount = Math.ceil(timeDiff / (1000 * 3600 * 24))
+    
+    return nightCount
+  }, [])
+
   // 获取当前位置
   const getCurrentLocation = useCallback(async () => {
     try {
       setLoading(true)
       const res = await getLocation({
         type: 'wgs84',
-        success: (res) => {
+        success: async (res) => {
           console.log('获取位置成功', res)
-          // 这里应该调用逆地理编码API获取城市名称
-          // 模拟返回北京
-          setCurrentCity('北京')
-          setLocationPermission(true)
+          try {
+            // 调用后端API根据坐标获取位置信息
+            const locationData = await locationApi.getLocationByCoords(
+              res.latitude, 
+              res.longitude
+            )
+            
+            if (locationData.success && locationData.data) {
+              setCurrentCity(locationData.data.city || '未知城市')
+              setLocationPermission(true)
+            } else {
+              // 模拟返回北京
+              setCurrentCity('北京')
+              setLocationPermission(true)
+            }
+          } catch (apiError) {
+            console.log('获取位置信息失败', apiError)
+            // 模拟返回北京
+            setCurrentCity('北京')
+            setLocationPermission(true)
+          }
         },
         fail: (err) => {
           console.log('获取位置失败', err)
@@ -150,20 +192,268 @@ export default function Index () {
   }, [])
 
   // 处理查询按钮点击
-  const handleSearch = useCallback(() => {
+  const handleSearch = useCallback(async () => {
+    // 验证日期选择
+    if (!checkInDate || !checkOutDate) {
+      showToast({
+        title: '请选择入住和离店日期',
+        icon: 'none'
+      })
+      return
+    }
+
+    // 验证城市选择
+    if (!currentCity || currentCity === '定位中...' || currentCity === '请选择城市') {
+      showToast({
+        title: '请选择城市',
+        icon: 'none'
+      })
+      return
+    }
+
     // 构建查询参数
     const searchParams = {
       city: currentCity,
       keyword: keyword,
       checkInDate: checkInDate,
-      checkOutDate: checkOutDate
+      checkOutDate: checkOutDate,
+      nights: calculateNights(checkInDate, checkOutDate)
     }
 
-    // 跳转到酒店列表页
-    navigateTo({
-      url: `/pages/hotel-list/hotel-list?params=${encodeURIComponent(JSON.stringify(searchParams))}`
+    try {
+      setLoading(true)
+      
+      console.log('开始搜索，参数:', searchParams)
+      
+      // 直接跳转到酒店列表页，不依赖API调用结果
+      navigateTo({
+        url: `/pages/hotel-list/hotel-list?params=${encodeURIComponent(JSON.stringify(searchParams))}`
+      })
+    } catch (error) {
+      console.log('搜索酒店失败', error)
+      showToast({
+        title: '搜索失败，请稍后重试',
+        icon: 'none'
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [currentCity, keyword, checkInDate, checkOutDate, calculateNights])
+
+  // 全国城市数据
+  const citiesData = {
+    hot: [
+      { id: 1, name: '北京' },
+      { id: 2, name: '上海' },
+      { id: 3, name: '广州' },
+      { id: 4, name: '深圳' },
+      { id: 5, name: '杭州' },
+      { id: 6, name: '成都' },
+      { id: 7, name: '重庆' },
+      { id: 8, name: '西安' }
+    ],
+    A: [
+      { id: 9, name: '鞍山' },
+      { id: 10, name: '安庆' },
+      { id: 11, name: '安阳' },
+      { id: 12, name: '安顺' }
+    ],
+    B: [
+      { id: 13, name: '北京' },
+      { id: 14, name: '上海' },
+      { id: 15, name: '广州' },
+      { id: 16, name: '深圳' },
+      { id: 17, name: '杭州' },
+      { id: 18, name: '成都' },
+      { id: 19, name: '重庆' },
+      { id: 20, name: '西安' },
+      { id: 21, name: '南京' },
+      { id: 22, name: '武汉' },
+      { id: 23, name: '天津' },
+      { id: 24, name: '苏州' },
+      { id: 25, name: '厦门' },
+      { id: 26, name: '青岛' },
+      { id: 27, name: '大连' },
+      { id: 28, name: '宁波' },
+      { id: 29, name: '济南' },
+      { id: 30, name: '哈尔滨' }
+    ],
+    C: [
+      { id: 31, name: '长沙' },
+      { id: 32, name: '长春' },
+      { id: 33, name: '常州' },
+      { id: 34, name: '巢湖' },
+      { id: 35, name: '郴州' },
+      { id: 36, name: '常德' },
+      { id: 37, name: '潮州' }
+    ],
+    D: [
+      { id: 38, name: '大连' },
+      { id: 39, name: '东莞' },
+      { id: 40, name: '德州' },
+      { id: 41, name: '德阳' },
+      { id: 42, name: '丹东' }
+    ],
+    E: [
+      { id: 43, name: '鄂尔多斯' },
+      { id: 44, name: '鄂州' }
+    ],
+    F: [
+      { id: 45, name: '福州' },
+      { id: 46, name: '佛山' },
+      { id: 47, name: '抚顺' },
+      { id: 48, name: '阜新' }
+    ],
+    G: [
+      { id: 49, name: '广州' },
+      { id: 50, name: '贵阳' },
+      { id: 51, name: '桂林' },
+      { id: 52, name: '赣州' }
+    ],
+    H: [
+      { id: 53, name: '杭州' },
+      { id: 54, name: '哈尔滨' },
+      { id: 55, name: '海口' },
+      { id: 56, name: '合肥' },
+      { id: 57, name: '呼和浩特' },
+      { id: 58, name: '惠州' },
+      { id: 59, name: '湖州' },
+      { id: 60, name: '淮安' },
+      { id: 61, name: '菏泽' }
+    ],
+    J: [
+      { id: 62, name: '济南' },
+      { id: 63, name: '南京' },
+      { id: 64, name: '南昌' },
+      { id: 65, name: '吉林' },
+      { id: 66, name: '济宁' },
+      { id: 67, name: '嘉兴' },
+      { id: 68, name: '江门' }
+    ],
+    K: [
+      { id: 69, name: '昆明' },
+      { id: 70, name: '开封' }
+    ],
+    L: [
+      { id: 71, name: '兰州' },
+      { id: 72, name: '洛阳' },
+      { id: 73, name: '泸州' },
+      { id: 74, name: '柳州' },
+      { id: 75, name: '廊坊' }
+    ],
+    M: [
+      { id: 76, name: '绵阳' },
+      { id: 77, name: '茂名' },
+      { id: 78, name: '马鞍山' },
+      { id: 79, name: '梅州' }
+    ],
+    N: [
+      { id: 80, name: '南京' },
+      { id: 81, name: '南昌' },
+      { id: 82, name: '南宁' },
+      { id: 83, name: '宁波' },
+      { id: 84, name: '南充' },
+      { id: 85, name: '南阳' }
+    ],
+    P: [
+      { id: 86, name: '莆田' },
+      { id: 87, name: '萍乡' }
+    ],
+    Q: [
+      { id: 88, name: '青岛' },
+      { id: 89, name: '泉州' },
+      { id: 90, name: '曲靖' },
+      { id: 91, name: '衢州' }
+    ],
+    R: [
+      { id: 92, name: '日照' },
+      { id: 93, name: '荣成' }
+    ],
+    S: [
+      { id: 94, name: '上海' },
+      { id: 95, name: '深圳' },
+      { id: 96, name: '苏州' },
+      { id: 97, name: '沈阳' },
+      { id: 98, name: '石家庄' },
+      { id: 99, name: '绍兴' },
+      { id: 100, name: '汕头' },
+      { id: 101, name: '汕尾' },
+      { id: 102, name: '韶关' },
+      { id: 103, name: '邵阳' }
+    ],
+    T: [
+      { id: 104, name: '天津' },
+      { id: 105, name: '太原' },
+      { id: 106, name: '唐山' },
+      { id: 107, name: '台州' },
+      { id: 108, name: '泰州' }
+    ],
+    W: [
+      { id: 109, name: '武汉' },
+      { id: 110, name: '无锡' },
+      { id: 111, name: '温州' },
+      { id: 112, name: '潍坊' },
+      { id: 113, name: '威海' }
+    ],
+    X: [
+      { id: 114, name: '西安' },
+      { id: 115, name: '厦门' },
+      { id: 116, name: '徐州' },
+      { id: 117, name: '西宁' },
+      { id: 118, name: '襄阳' }
+    ],
+    Y: [
+      { id: 119, name: '宜昌' },
+      { id: 120, name: '岳阳' },
+      { id: 121, name: '运城' },
+      { id: 122, name: '阳江' }
+    ],
+    Z: [
+      { id: 123, name: '郑州' },
+      { id: 124, name: '重庆' },
+      { id: 125, name: '长沙' },
+      { id: 126, name: '成都' },
+      { id: 127, name: '长春' },
+      { id: 128, name: '常州' },
+      { id: 129, name: '漳州' },
+      { id: 130, name: '株洲' }
+    ]
+  }
+
+  // 所有城市字母
+  const letters = Object.keys(citiesData).filter(key => key !== 'hot')
+
+  // 处理城市搜索
+  const handleCitySearch = (keyword) => {
+    setCitySearchKeyword(keyword)
+    if (!keyword) {
+      setFilteredCities([])
+      return
+    }
+
+    // 过滤城市
+    const filtered = []
+    Object.values(citiesData).forEach(cityList => {
+      cityList.forEach(city => {
+        if (city.name.includes(keyword)) {
+          filtered.push(city)
+        }
+      })
     })
-  }, [currentCity, keyword, checkInDate, checkOutDate])
+    setFilteredCities(filtered)
+  }
+
+  // 处理城市选择
+  const handleCitySelect = (city) => {
+    setCurrentCity(city.name)
+    setShowCitySelector(false)
+  }
+
+  // 处理城市选择按钮点击
+  const handleCityClick = () => {
+    console.log('点击了城市选择按钮，显示城市选择器')
+    setShowCitySelector(true)
+  }
 
   // 处理Banner点击
   const handleBannerClick = useCallback(() => {
@@ -210,18 +500,6 @@ export default function Index () {
     // 不自动关闭日历，让用户点击确定按钮关闭
   }, [])
 
-  // 计算住宿晚数
-  const calculateNights = useCallback((checkIn, checkOut) => {
-    if (!checkIn || !checkOut) return 0
-    
-    const startDate = new Date(checkIn)
-    const endDate = new Date(checkOut)
-    const timeDiff = endDate.getTime() - startDate.getTime()
-    const nightCount = Math.ceil(timeDiff / (1000 * 3600 * 24))
-    
-    return nightCount
-  }, [])
-
   // 处理日期范围变化
   const handleDateRangeChange = useCallback((dates) => {
     if (dates && dates.length === 2) {
@@ -262,12 +540,6 @@ export default function Index () {
   // 处理日历取消
   const handleCalendarCancel = useCallback(() => {
     setShowCalendar(false)
-  }, [])
-
-  // 处理城市选择
-  const handleCityClick = useCallback(() => {
-    console.log('点击城市选择')
-    // 这里应该跳转到城市选择页
   }, [])
 
   return (
@@ -454,6 +726,97 @@ export default function Index () {
                 确认
               </Button>
             </View>
+          </View>
+        </View>
+      )}
+
+      {/* 城市选择器组件 */}
+      {showCitySelector && (
+        <View className='city-selector-container'>
+          <View className='city-selector-content'>
+            <View className='city-selector-header'>
+              <Text className='city-selector-title'>选择城市</Text>
+              <Text className='city-selector-close' onClick={() => setShowCitySelector(false)}>✕</Text>
+            </View>
+            
+            {/* 城市搜索框 */}
+            <View className='city-search-box'>
+              <Text className='city-search-icon'>🔍</Text>
+              <Input 
+                className='city-search-input'
+                placeholder='输入城市名称搜索'
+                value={citySearchKeyword}
+                onChange={(e) => handleCitySearch(e.target.value)}
+              />
+            </View>
+            
+            {/* 城市列表 */}
+            <ScrollView 
+              className='city-list-container'
+              scrollY
+              style={{ flex: 1 }}
+            >
+              {citySearchKeyword ? (
+                /* 搜索结果 */
+                <View className='city-section'>
+                  <Text className='section-title'>搜索结果</Text>
+                  <View className='city-list'>
+                    {filteredCities.length > 0 ? (
+                      filteredCities.map(city => (
+                        <View 
+                          key={city.id} 
+                          className='city-item'
+                          onClick={() => handleCitySelect(city)}
+                        >
+                          <Text>{city.name}</Text>
+                        </View>
+                      ))
+                    ) : (
+                      <View className='no-result'>
+                        <Text>未找到匹配的城市</Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              ) : (
+                /* 热门城市和按字母排序的城市 */
+                <>
+                  {/* 热门城市 */}
+                  <View className='city-section'>
+                    <Text className='section-title'>热门城市</Text>
+                    <View className='hot-cities'>
+                      {citiesData.hot.map(city => (
+                        <View 
+                          key={city.id} 
+                          className='hot-city-item'
+                          onClick={() => handleCitySelect(city)}
+                        >
+                          <Text>{city.name}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  </View>
+                  
+                  {/* 按字母排序的城市 */}
+                  {letters.map(letter => (
+                    <View key={letter} className='city-section'>
+                      <Text className='section-title'>{letter}</Text>
+                      <View className='city-list'>
+                        {citiesData[letter].map(city => (
+                          <View 
+                            key={city.id} 
+                            className='city-item'
+                            onClick={() => handleCitySelect(city)}
+                          >
+                            <Text>{city.name}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                  ))}
+                </>
+              )}
+            </ScrollView>
           </View>
         </View>
       )}
