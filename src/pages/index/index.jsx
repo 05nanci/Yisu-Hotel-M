@@ -23,6 +23,8 @@ export default function Index () {
   const [showFilter, setShowFilter] = useState(false)
   const [currentFilterType, setCurrentFilterType] = useState('')
   const [filterOptions, setFilterOptions] = useState({})
+  const [selectedFilterValue, setSelectedFilterValue] = useState('')
+  const [selectedFacilities, setSelectedFacilities] = useState([])
   
   // 返回到搜索页面
   const handleBackToSearch = useCallback(() => {
@@ -473,8 +475,38 @@ export default function Index () {
   const handleFilterClick = useCallback((filterType) => {
     console.log('点击筛选', filterType)
     setCurrentFilterType(filterType)
+    
+    // 重置选中值
+    setSelectedFilterValue('')
+    
+    // 如果是设施筛选，重置设施选中状态
+    if (filterType === 'facility') {
+      setSelectedFacilities([])
+    }
+    
     setShowFilter(true)
   }, [])
+
+  // 处理筛选选项点击
+  const handleFilterOptionClick = useCallback((value) => {
+    console.log('点击筛选选项', value)
+    
+    if (currentFilterType === 'facility') {
+      // 设施类型支持多选
+      setSelectedFacilities(prev => {
+        if (prev.includes(value)) {
+          // 如果已选中，则取消选中
+          return prev.filter(item => item !== value)
+        } else {
+          // 如果未选中，则添加选中
+          return [...prev, value]
+        }
+      })
+    } else {
+      // 其他类型保持单选
+      setSelectedFilterValue(value)
+    }
+  }, [currentFilterType])
 
   // 处理日期选择
   const handleDateClick = useCallback(() => {
@@ -866,7 +898,11 @@ export default function Index () {
                   {currentFilterType === 'star' && (
                     <View className='filter-options'>
                       {['不限', '5星', '4星', '3星', '2星及以下'].map(star => (
-                        <View key={star} className='filter-option-item'>
+                        <View 
+                          key={star} 
+                          className={`filter-option-item ${selectedFilterValue === star ? 'filter-option-active' : ''}`}
+                          onClick={() => handleFilterOptionClick(star)}
+                        >
                           <Text>{star}</Text>
                         </View>
                       ))}
@@ -876,7 +912,11 @@ export default function Index () {
                   {currentFilterType === 'price' && (
                     <View className='filter-options'>
                       {['不限', '¥500以下', '¥500-800', '¥800-1200', '¥1200-2000', '¥2000以上'].map(price => (
-                        <View key={price} className='filter-option-item'>
+                        <View 
+                          key={price} 
+                          className={`filter-option-item ${selectedFilterValue === price ? 'filter-option-active' : ''}`}
+                          onClick={() => handleFilterOptionClick(price)}
+                        >
                           <Text>{price}</Text>
                         </View>
                       ))}
@@ -886,7 +926,11 @@ export default function Index () {
                   {currentFilterType === 'facility' && (
                     <View className='filter-options'>
                       {['免费WiFi', '免费停车场', '健身房', '游泳池', '餐厅', '会议室', '商务中心', 'SPA'].map(facility => (
-                        <View key={facility} className='filter-option-item'>
+                        <View 
+                          key={facility} 
+                          className={`filter-option-item ${selectedFacilities.includes(facility) ? 'filter-option-active' : ''}`}
+                          onClick={() => handleFilterOptionClick(facility)}
+                        >
                           <Text>{facility}</Text>
                         </View>
                       ))}

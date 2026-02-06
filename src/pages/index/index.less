@@ -431,6 +431,7 @@
   position: sticky;
   bottom: 0;
   z-index: 10;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
 }
 
 .calendar-confirm-btn {
@@ -658,12 +659,36 @@
   color: #333;
   padding: 12px 0;
   border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.filter-option-item:active {
+  background-color: #f5f5f5;
+}
+
+/* 选中的筛选选项 */
+.filter-option-active {
+  color: #1890ff;
+  font-weight: 500;
+  background-color: #e6f7ff;
+}
+
+.filter-option-active::after {
+  content: '✓';
+  float: right;
+  font-size: 16px;
+  color: #1890ff;
 }
 
 .filter-footer {
   padding: 16px 20px;
   border-top: 1px solid #f0f0f0;
   background-color: white;
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
 }
 
 .filter-confirm-btn {
