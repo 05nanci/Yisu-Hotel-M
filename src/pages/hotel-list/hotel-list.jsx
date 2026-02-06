@@ -23,6 +23,12 @@ export default function HotelList () {
     amenities: [],
     minRating: 0
   })
+  const [tempFilters, setTempFilters] = useState({
+    priceRange: [0, 5000],
+    starLevels: [],
+    amenities: [],
+    minRating: 0
+  })
   const [collectedHotels, setCollectedHotels] = useState(new Set())
   const [isLoading, setIsLoading] = useState(false)
   const scrollViewRef = useRef(null)
@@ -31,6 +37,13 @@ export default function HotelList () {
   useEffect(() => {
     initPage()
   }, [])
+
+  // 当showFilter为true时，同步tempFilters为当前filters的值
+  useEffect(() => {
+    if (showFilter) {
+      setTempFilters(filters)
+    }
+  }, [showFilter, filters])
 
   // 搜索酒店
   const searchHotels = useCallback(async (params) => {
@@ -228,6 +241,44 @@ export default function HotelList () {
     })
   }, [])
 
+  // 处理城市选择
+  const handleCitySelect = useCallback(() => {
+    navigateTo({
+      url: `/pages/city-select/city-select?returnUrl=/pages/hotel-list/hotel-list`
+    })
+  }, [])
+
+  // 处理日期选择
+  const handleDateSelect = useCallback(() => {
+    // 这里可以跳转到日期选择页面，或者使用弹窗选择日期
+    showModal({
+      title: '日期选择',
+      content: '选择入住和退房日期',
+      confirmText: '确定',
+      cancelText: '取消',
+      success: (res) => {
+        if (res.confirm) {
+          // 模拟选择了新日期
+          const newCheckInDate = new Date().toISOString().split('T')[0]
+          const newCheckOutDate = new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0]
+          
+          const newParams = {
+            ...searchParams,
+            checkInDate: newCheckInDate,
+            checkOutDate: newCheckOutDate,
+            nights: 2
+          }
+          
+          setSearchParams(newParams)
+          setPage(1)
+          setHotels([])
+          setHasMore(true)
+          searchHotels({ ...newParams, page: 1 })
+        }
+      }
+    })
+  }, [searchParams, searchHotels])
+
   // 渲染酒店卡片
   const renderHotelCard = useCallback((hotel) => {
     const isCollected = collectedHotels.has(hotel.id)
@@ -297,22 +348,37 @@ export default function HotelList () {
     )
   }, [handleHotelClick, handleCollect, handleLongPress, collectedHotels])
 
+  // 处理筛选确认
+  const handleFilterConfirm = useCallback(() => {
+    setFilters(tempFilters)
+    setShowFilter(false)
+    setPage(1)
+    setHotels([])
+    setHasMore(true)
+    searchHotels({ ...searchParams, page: 1 })
+  }, [tempFilters, searchParams, searchHotels])
+
+  // 处理筛选取消
+  const handleFilterCancel = useCallback(() => {
+    setShowFilter(false)
+  }, [])
+
   // 渲染筛选区域
   const renderFilterSection = useCallback(() => {
     return (
       <View className='filter-section'>
         <View className='filter-header'>
           <Text className='filter-title'>筛选条件</Text>
-          <Text className='filter-reset' onClick={handleResetFilter}>重置</Text>
+          <Text className='filter-reset' onClick={() => setTempFilters({ priceRange: [0, 5000], starLevels: [], amenities: [], minRating: 0 })}>重置</Text>
         </View>
         
         {/* 价格区间 */}
         <View className='filter-item'>
           <Text className='filter-item-title'>价格区间</Text>
           <View className='price-range'>
-            <Text className='price-value'>{filters.priceRange[0]}元</Text>
+            <Text className='price-value'>{tempFilters.priceRange[0]}元</Text>
             <Text className='price-separator'>-</Text>
-            <Text className='price-value'>{filters.priceRange[1]}元</Text>
+            <Text className='price-value'>{tempFilters.priceRange[1]}元</Text>
           </View>
           {/* 价格滑块 */}
           <View className='price-slider'>
@@ -327,15 +393,15 @@ export default function HotelList () {
             {['二星及以下', '三星', '四星', '五星'].map((star, index) => (
               <View 
                 key={index} 
-                className={`star-option ${filters.starLevels.includes(index + 2) ? 'selected' : ''}`}
+                className={`star-option ${tempFilters.starLevels.includes(index + 2) ? 'selected' : ''}`}
                 onClick={() => {
-                  const newStarLevels = [...filters.starLevels]
+                  const newStarLevels = [...tempFilters.starLevels]
                   if (newStarLevels.includes(index + 2)) {
                     newStarLevels.splice(newStarLevels.indexOf(index + 2), 1)
                   } else {
                     newStarLevels.push(index + 2)
                   }
-                  handleFilterChange({ ...filters, starLevels: newStarLevels })
+                  setTempFilters({ ...tempFilters, starLevels: newStarLevels })
                 }}
               >
                 <Text>{star}</Text>
@@ -351,15 +417,15 @@ export default function HotelList () {
             {['免费WiFi', '游泳池', '24小时前台', '停车场', '健身房', '餐厅'].map((amenity, index) => (
               <View 
                 key={index} 
-                className={`amenity-option ${filters.amenities.includes(amenity) ? 'selected' : ''}`}
+                className={`amenity-option ${tempFilters.amenities.includes(amenity) ? 'selected' : ''}`}
                 onClick={() => {
-                  const newAmenities = [...filters.amenities]
+                  const newAmenities = [...tempFilters.amenities]
                   if (newAmenities.includes(amenity)) {
                     newAmenities.splice(newAmenities.indexOf(amenity), 1)
                   } else {
                     newAmenities.push(amenity)
                   }
-                  handleFilterChange({ ...filters, amenities: newAmenities })
+                  setTempFilters({ ...tempFilters, amenities: newAmenities })
                 }}
               >
                 <Text>{amenity}</Text>
@@ -375,17 +441,27 @@ export default function HotelList () {
             {[0, 3, 4, 4.5].map((rating) => (
               <View 
                 key={rating} 
-                className={`rating-option ${filters.minRating === rating ? 'selected' : ''}`}
-                onClick={() => handleFilterChange({ ...filters, minRating: rating })}
+                className={`rating-option ${tempFilters.minRating === rating ? 'selected' : ''}`}
+                onClick={() => setTempFilters({ ...tempFilters, minRating: rating })}
               >
                 <Text>{rating === 0 ? '不限' : `≥${rating}分`}</Text>
               </View>
             ))}
           </View>
         </View>
+        
+        {/* 确定和取消按钮 */}
+        <View className='filter-buttons'>
+          <View className='cancel-button' onClick={handleFilterCancel}>
+            <Text>取消</Text>
+          </View>
+          <View className='confirm-button' onClick={handleFilterConfirm}>
+            <Text>确定</Text>
+          </View>
+        </View>
       </View>
     )
-  }, [filters, handleResetFilter, handleFilterChange])
+  }, [tempFilters, handleFilterConfirm, handleFilterCancel])
 
   // 渲染排序选项
   const renderSortOptions = useCallback(() => {
@@ -416,13 +492,13 @@ export default function HotelList () {
       {/* 顶部核心筛选头 */}
       <View className='filter-header-fixed'>
         <View className='filter-info'>
-          <View className='filter-item' onClick={() => {/* 跳转到城市选择 */}}>
+          <View className='filter-item' onClick={handleCitySelect}>
             <Text className='filter-label'>城市</Text>
             <Text className='filter-value'>{searchParams.city || '未知'}</Text>
             <Text className="chevron-down">▼</Text>
           </View>
           
-          <View className='filter-item' onClick={() => {/* 跳转到日期选择 */}}>
+          <View className='filter-item' onClick={handleDateSelect}>
             <Text className='filter-label'>日期</Text>
             <Text className='filter-value'>
               {searchParams.checkInDate} - {searchParams.checkOutDate}
