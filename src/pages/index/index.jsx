@@ -469,19 +469,6 @@ export default function Index () {
     setShowCalendar(true)
   }, [])
 
-  // 处理快捷选择天数
-  const handleQuickSelect = useCallback((days) => {
-    const today = new Date()
-    const checkIn = formatDate(today)
-    const checkOutDateObj = new Date(today)
-    checkOutDateObj.setDate(today.getDate() + days)
-    const checkOut = formatDate(checkOutDateObj)
-    
-    setCheckInDate(checkIn)
-    setCheckOutDate(checkOut)
-    setShowCalendar(false)
-  }, [])
-
   // 处理日历取消
   const handleCalendarCancel = useCallback(() => {
     setShowCalendar(false)
@@ -686,25 +673,6 @@ export default function Index () {
                   <Text className='calendar-close' onClick={handleCalendarCancel}>✕</Text>
                 </View>
                 
-                {/* 快捷选择天数 */}
-                <View className='calendar-quick-select'>
-                  <Text className='quick-select-title'>快捷选择</Text>
-                  <View className='quick-select-buttons'>
-                    <Button className='quick-select-btn' onClick={() => handleQuickSelect(1)}>
-                      1天
-                    </Button>
-                    <Button className='quick-select-btn' onClick={() => handleQuickSelect(2)}>
-                      2天
-                    </Button>
-                    <Button className='quick-select-btn' onClick={() => handleQuickSelect(3)}>
-                      3天
-                    </Button>
-                    <Button className='quick-select-btn' onClick={() => handleQuickSelect(7)}>
-                      7天
-                    </Button>
-                  </View>
-                </View>
-                
                 <View className='calendar-range-info'>
                   <Text className='range-info-item'>
                     入住: <Text style={{ color: '#1890ff' }}>{checkInDate || '未选择'}</Text>
@@ -770,9 +738,6 @@ export default function Index () {
                 </View>
                 
                 <View className='calendar-footer'>
-                  <Button className='calendar-cancel-btn' onClick={handleCalendarCancel}>
-                    取消
-                  </Button>
                   <Button className='calendar-confirm-btn' onClick={handleCalendarConfirm}>
                     确认
                   </Button>
@@ -785,27 +750,27 @@ export default function Index () {
           {showCitySelector && (
             <View className='city-selector-container'>
               <View className='city-selector-content'>
+                {/* 固定头部 */}
                 <View className='city-selector-header'>
                   <Text className='city-selector-title'>选择城市</Text>
                   <Text className='city-selector-close' onClick={() => setShowCitySelector(false)}>✕</Text>
                 </View>
                 
-                {/* 城市搜索框 */}
+                {/* 固定搜索框 */}
                 <View className='city-search-box'>
                   <Text className='city-search-icon'>🔍</Text>
                   <Input 
                     className='city-search-input'
                     placeholder='输入城市名称搜索'
                     value={citySearchKeyword}
-                    onChange={(e) => handleCitySearch(e.target.value)}
+                    onInput={(e) => handleCitySearch(e.detail.value)}
                   />
                 </View>
                 
-                {/* 城市列表 */}
+                {/* 可滚动的城市列表 */}
                 <ScrollView 
                   className='city-list-container'
                   scrollY
-                  style={{ flex: 1 }}
                 >
                   {citySearchKeyword ? (
                     /* 搜索结果 */

@@ -187,7 +187,7 @@
 
 
 
-/* 日历组件样式 */
+/* 日历组件样式 - 移动端优化 */
 .calendar-container {
   position: fixed;
   top: 0;
@@ -196,17 +196,20 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   z-index: 1000;
 }
 
 .calendar-content {
   width: 100%;
-  max-width: 600px;
+  max-height: 85vh;
   background-color: white;
-  border-radius: 16px 16px 0 0;
-  padding-bottom: env(safe-area-inset-bottom, 20px);
+  border-radius: 20px;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
 }
 
 .calendar-header {
@@ -215,57 +218,27 @@
   justify-content: space-between;
   padding: 16px 20px;
   border-bottom: 1px solid #f0f0f0;
+  background-color: #f9f9f9;
 }
 
 .calendar-title {
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 19px;
+  font-weight: 600;
   color: #333;
 }
 
 .calendar-close {
-  font-size: 20px;
-  color: #999;
-  padding: 4px;
-}
-
-.calendar-quick-select {
-  padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.quick-select-title {
-  font-size: 14px;
+  font-size: 24px;
   color: #666;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.quick-select-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.quick-select-btn {
-  flex: 1;
-  min-width: 70px;
-  padding: 8px 0;
-  background-color: #f5f5f5;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #333;
-  text-align: center;
-}
-
-.quick-select-btn:active {
-  background-color: #e0e0e0;
+  padding: 4px;
+  line-height: 1;
 }
 
 .calendar-body {
   padding: 0;
   min-height: 300px;
+  flex: 1;
+  overflow-y: auto;
 }
 
 /* 完整日历样式 */
@@ -280,42 +253,53 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 16px 20px;
   border-bottom: 1px solid #f0f0f0;
+  background-color: #fafafa;
 }
 
 .month-nav-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
   border: 1px solid #e0e0e0;
   background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  color: #666;
+  font-size: 18px;
+  color: #1890ff;
   padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.month-nav-btn:active {
+  background-color: #f5f5f5;
+  transform: scale(0.95);
 }
 
 .current-month {
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 17px;
+  font-weight: 600;
   color: #333;
+  min-width: 120px;
+  text-align: center;
 }
 
 /* 星期标题 */
 .week-header {
   display: flex;
   border-bottom: 1px solid #f0f0f0;
+  background-color: #f9f9f9;
 }
 
 .week-day {
   flex: 1;
   text-align: center;
-  padding: 12px 0;
-  font-size: 14px;
+  padding: 14px 0;
+  font-size: 13px;
   color: #666;
+  font-weight: 500;
 }
 
 /* 日期网格 */
@@ -336,11 +320,18 @@
   justify-content: center;
   aspect-ratio: 1;
   position: relative;
+  transition: all 0.2s ease;
+}
+
+.date-cell:active {
+  background-color: #f5f5f5;
 }
 
 .date-text {
-  font-size: 14px;
+  font-size: 15px;
   color: #333;
+  font-weight: 400;
+  padding: 8px;
 }
 
 /* 今天 */
@@ -350,32 +341,35 @@
 
 .today .date-text {
   color: #1890ff;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* 入住日期 */
 .check-in {
   background: #1890ff;
+  border-radius: 8px 0 0 8px;
 }
 
 .check-in .date-text {
-  color: #fff;
-  font-weight: 500;
+  color: #000;
+  font-weight: 700;
 }
 
 /* 离店日期 */
 .check-out {
   background: #1890ff;
+  border-radius: 0 8px 8px 0;
 }
 
 .check-out .date-text {
-  color: #fff;
-  font-weight: 500;
+  color: #000;
+  font-weight: 700;
 }
 
 /* 日期范围内 */
 .in-range {
   background: #e6f7ff;
+  border-radius: 0;
 }
 
 /* 禁用日期 */
@@ -399,8 +393,8 @@
 .calendar-range-info {
   display: flex;
   justify-content: space-between;
-  padding: 12px 20px;
-  background: #f5f5f5;
+  padding: 14px 20px;
+  background: #f9f9f9;
   border-top: 1px solid #e8e8e8;
   border-bottom: 1px solid #e8e8e8;
   flex-wrap: wrap;
@@ -411,43 +405,50 @@
   font-size: 14px;
   color: #666;
   flex: 1;
-  min-width: 100px;
+  min-width: 110px;
   text-align: center;
+  line-height: 1.4;
+}
+
+.range-info-item Text {
+  color: #1890ff;
+  font-weight: 500;
 }
 
 .calendar-footer {
   display: flex;
+  justify-content: center;
   padding: 16px 20px;
   border-top: 1px solid #f0f0f0;
-  gap: 12px;
-}
-
-.calendar-cancel-btn {
-  flex: 1;
-  padding: 12px;
-  background-color: #f5f5f5;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 16px;
-  color: #333;
+  background-color: #f9f9f9;
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
 }
 
 .calendar-confirm-btn {
-  flex: 1;
-  padding: 12px;
+  width: 100%;
+  max-width: 300px;
+  padding: 16px;
   background-color: #1890ff;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 16px;
+  font-weight: 600;
   color: white;
-}
-
-.calendar-cancel-btn:active {
-  background-color: #e0e0e0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .calendar-confirm-btn:active {
   background-color: #40a9ff;
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(24, 144, 255, 0.3);
 }
 
 /* 城市选择器样式 */
@@ -459,7 +460,7 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   z-index: 2000;
 }
@@ -467,12 +468,13 @@
 .city-selector-content {
   width: 100%;
   max-width: 600px;
-  height: 80%;
+  height: 70%;
   background-color: white;
-  border-radius: 16px 16px 0 0;
+  border-radius: 20px;
   padding-bottom: env(safe-area-inset-bottom, 20px);
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .city-selector-header {
@@ -481,6 +483,7 @@
   justify-content: space-between;
   padding: 16px 20px;
   border-bottom: 1px solid #f0f0f0;
+  background-color: white;
 }
 
 .city-selector-title {
@@ -500,6 +503,7 @@
   align-items: center;
   padding: 12px 20px;
   border-bottom: 1px solid #f0f0f0;
+  background-color: white;
 }
 
 .city-search-icon {
@@ -525,6 +529,7 @@
 .city-list-container {
   flex: 1;
   overflow-y: auto;
+  max-height: calc(100% - 100px);
 }
 
 .city-section {
