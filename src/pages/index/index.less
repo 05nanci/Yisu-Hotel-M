@@ -1,40 +1,744 @@
 .index {
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 14px;
   line-height: 1.4;
+  background-color: #f5f5f5;
+  min-height: 100vh;
 }
 
-.title {
-  font-size: 20px;
+/* 顶部Banner */
+.banner {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 0 0 12px 12px;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+}
+
+.banner-text {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: white;
+  font-size: 18px;
   font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* 核心查询区域 */
+.search-container {
+  margin: 16px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+/* 当前地点 */
+.location-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  user-select: none;
+  z-index: 1000;
+  position: relative;
+}
+
+.location-bar:active {
+  background-color: #f5f5f5;
+}
+
+.location-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.location-icon {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 关键字搜索框 */
+.search-input-container {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.search-icon {
+  margin-right: 8px;
+  color: #999;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+  background: transparent;
+  padding: 4px 0;
+  outline: none;
+  border: none;
+  min-height: 20px;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+/* 日期选择框 */
+.date-container {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.date-icon {
+  margin-right: 8px;
+  color: #999;
+}
+
+.date-text {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+
+/* 筛选条件栏 */
+.filter-bar {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  border-top: 1px solid #f0f0f0;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.filter-item Text {
+  font-size: 14px;
+  color: #333;
+}
+
+.filter-arrow {
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+}
+
+/* 快捷标签区 */
+.tags-container {
   margin-bottom: 20px;
-  line-height: 1.2;
+  padding-bottom: 8px;
 }
 
-.test-btn {
-  margin: 20px 0;
+.tag {
+  display: inline-block;
+  padding: 8px 16px;
+  margin-right: 12px;
+  background-color: #f5f5f5;
+  border-radius: 16px;
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
 }
 
-.response {
-  margin-top: 20px;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.tag:active {
+  background-color: #e0e0e0;
+}
+
+/* 选中标签 */
+.tag-active {
+  background-color: #1890ff;
+  color: white;
+}
+
+/* 查询按钮 */
+.search-button {
+  width: 100%;
+  height: 48px;
+  background-color: #1890ff;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+}
+
+.search-button:active {
+  background-color: #40a9ff;
+}
+
+
+
+/* 日历组件样式 - 移动端优化 */
+.calendar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.calendar-content {
+  width: 100%;
+  max-height: 85vh;
+  background-color: white;
+  border-radius: 20px;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
   background-color: #f9f9f9;
 }
 
-.response-title {
-  font-weight: bold;
-  margin-bottom: 10px;
-  display: block;
-  font-size: 16px;
+.calendar-title {
+  font-size: 19px;
+  font-weight: 600;
+  color: #333;
 }
 
-.response-content {
-  font-size: 14px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  font-family: 'Courier New', monospace;
+.calendar-close {
+  font-size: 24px;
+  color: #666;
+  padding: 4px;
+  line-height: 1;
+}
+
+.calendar-body {
+  padding: 0;
+  min-height: 300px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* 完整日历样式 */
+.full-calendar {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 日历头部 */
+.calendar-header-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fafafa;
+}
+
+.month-nav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #1890ff;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.month-nav-btn:active {
+  background-color: #f5f5f5;
+  transform: scale(0.95);
+}
+
+.current-month {
+  font-size: 17px;
+  font-weight: 600;
   color: #333;
+  min-width: 120px;
+  text-align: center;
+}
+
+/* 星期标题 */
+.week-header {
+  display: flex;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #f9f9f9;
+}
+
+.week-day {
+  flex: 1;
+  text-align: center;
+  padding: 14px 0;
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* 日期网格 */
+.date-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 1px;
+  background: #f0f0f0;
+  padding: 1px;
+}
+
+/* 日期单元格 */
+.date-cell {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.date-cell:active {
+  background-color: #f5f5f5;
+}
+
+.date-text {
+  font-size: 15px;
+  color: #333;
+  font-weight: 400;
+  padding: 8px;
+}
+
+/* 今天 */
+.today {
+  background: #e6f7ff;
+}
+
+.today .date-text {
+  color: #1890ff;
+  font-weight: 600;
+}
+
+/* 入住日期 */
+.check-in {
+  background: #1890ff;
+  border-radius: 8px 0 0 8px;
+}
+
+.check-in .date-text {
+  color: #000;
+  font-weight: 700;
+}
+
+/* 离店日期 */
+.check-out {
+  background: #1890ff;
+  border-radius: 0 8px 8px 0;
+}
+
+.check-out .date-text {
+  color: #000;
+  font-weight: 700;
+}
+
+/* 日期范围内 */
+.in-range {
+  background: #e6f7ff;
+  border-radius: 0;
+}
+
+/* 禁用日期 */
+.disabled {
+  background: #f5f5f5;
+}
+
+.disabled-text {
+  color: #999;
+}
+
+/* 月份外日期 */
+.other-month {
+  background: #fafafa;
+}
+
+.other-month .date-text {
+  color: #d9d9d9;
+}
+
+.calendar-range-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #f9f9f9;
+  border-top: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.range-info-item {
+  font-size: 14px;
+  color: #666;
+  flex: 1;
+  min-width: 110px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.range-info-item Text {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+.calendar-footer {
+  display: flex;
+  justify-content: center;
+  padding: 16px 20px;
+  border-top: 1px solid #f0f0f0;
+  background-color: #f9f9f9;
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+.calendar-confirm-btn {
+  width: 100%;
+  max-width: 300px;
+  padding: 16px;
+  background-color: #1890ff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-confirm-btn:active {
+  background-color: #40a9ff;
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(24, 144, 255, 0.3);
+}
+
+/* 城市选择器样式 */
+.city-selector-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.city-selector-content {
+  width: 100%;
+  max-width: 600px;
+  height: 70%;
+  background-color: white;
+  border-radius: 20px;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.city-selector-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: white;
+}
+
+.city-selector-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.city-selector-close {
+  font-size: 20px;
+  color: #999;
+  padding: 4px;
+}
+
+.city-search-box {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: white;
+}
+
+.city-search-icon {
+  margin-right: 8px;
+  color: #999;
+}
+
+.city-search-input {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+  background: transparent;
+  padding: 4px 0;
+  outline: none;
+  border: none;
+  min-height: 20px;
+}
+
+.city-search-input::placeholder {
+  color: #999;
+}
+
+.city-list-container {
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(100% - 100px);
+}
+
+.city-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #999;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.hot-cities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hot-city-item {
+  padding: 8px 16px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.hot-city-item:active {
+  background-color: #e0e0e0;
+}
+
+.city-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.city-item {
+  padding: 12px 0;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.city-item:active {
+  background-color: #f5f5f5;
+}
+
+.no-result {
+  padding: 20px 0;
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+}
+
+/* 筛选弹窗 */
+.filter-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+  z-index: 1000;
+}
+
+.filter-content {
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: white;
+}
+
+.filter-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.filter-close {
+  font-size: 20px;
+  color: #999;
+  padding: 4px;
+}
+
+.filter-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  max-height: 400px;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.filter-option-item {
+  font-size: 15px;
+  color: #333;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.filter-option-item:active {
+  background-color: #f5f5f5;
+}
+
+/* 选中的筛选选项 */
+.filter-option-active {
+  color: #1890ff;
+  font-weight: 500;
+  background-color: #e6f7ff;
+}
+
+.filter-option-active::after {
+  content: '✓';
+  float: right;
+  font-size: 16px;
+  color: #1890ff;
+}
+
+.filter-footer {
+  padding: 20px;
+  border-top: 1px solid #f0f0f0;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+}
+
+.filter-confirm-btn {
+  width: 200px;
+  height: 48px;
+  background-color: #1890ff;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 375px) {
+  .banner {
+    height: 150px;
+  }
+  
+  .banner-text {
+    font-size: 16px;
+  }
+  
+  .search-container {
+    margin: 12px;
+    padding: 16px;
+  }
+  
+  .calendar-container {
+    padding-bottom: 0;
+  }
+  
+  .city-selector-content {
+    height: 70%;
+  }
+}
+
+@media (min-width: 414px) {
+  .banner {
+    height: 200px;
+  }
+  
+  .banner-text {
+    font-size: 20px;
+  }
+  
+  .calendar-container {
+    padding-bottom: 20px;
+  }
+  
+  .city-selector-content {
+    height: 85%;
+  }
 }
