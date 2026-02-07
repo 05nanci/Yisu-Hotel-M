@@ -1,10 +1,11 @@
 export default defineAppConfig({
   pages: [
     'pages/index/index',
+    'pages/order/order',
+    'pages/my/my',
     'pages/hotel-list/hotel-list',
     'pages/city-select/city-select',
-    'pages/test-page/test-page',
-    'pages/mine/mine'
+    'pages/test-page/test-page'
   ],
   window: {
     backgroundTextStyle: 'light',
@@ -13,17 +14,21 @@ export default defineAppConfig({
     navigationBarTextStyle: 'black'
   },
   tabBar: {
-    color: '#666',
+    color: '#999',
     selectedColor: '#1890ff',
     backgroundColor: '#fff',
     borderStyle: 'black',
     list: [
       {
         pagePath: 'pages/index/index',
-        text: '主页'
+        text: '首页'
       },
       {
-        pagePath: 'pages/mine/mine',
+        pagePath: 'pages/order/order',
+        text: '订单'
+      },
+      {
+        pagePath: 'pages/my/my',
         text: '我的'
       }
     ]
