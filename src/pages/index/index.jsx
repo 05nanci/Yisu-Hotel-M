@@ -634,8 +634,9 @@ export default function Index () {
               src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20promotion%20banner%20with%20spring%20festival%20discount&image_size=landscape_16_9" 
               className='banner-image'
               mode="aspectFill"
+              onClick={handleBannerClick}
             />
-            <View className='banner-text'>春节特惠，低至 8 折</View>
+            <View className='banner-text' onClick={handleBannerClick}>春节特惠，低至 8 折</View>
           </View>
 
           {/* 核心查询区域 */}
