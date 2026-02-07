@@ -5,7 +5,7 @@ module.exports = {
     ['taro', {
       framework: 'react',
       ts: false,
-      compiler: 'webpack5',
+      compiler: 'vite',
     }]
   ]
 }

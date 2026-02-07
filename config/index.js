@@ -6,8 +6,8 @@ import prodConfig from './prod'
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
 export default defineConfig(async (merge, { command, mode }) => {
   const baseConfig = {
-    projectName: 'Yisu-Hotel-M',
-    date: '2026-2-4',
+    projectName: 'yisu',
+    date: '2026-2-6',
     designWidth: 750,
     deviceRatio: {
       640: 2.34 / 2,
@@ -29,10 +29,7 @@ export default defineConfig(async (merge, { command, mode }) => {
       }
     },
     framework: 'react',
-    compiler: 'webpack5',
-    cache: {
-      enable: false // Webpack 持久化缓存配置，建议开启。默认配置请参考：https://docs.taro.zone/docs/config-detail#cache
-    },
+    compiler: 'vite',
     mini: {
       postcss: {
         pxtransform: {
@@ -53,10 +50,16 @@ export default defineConfig(async (merge, { command, mode }) => {
     h5: {
       publicPath: '/',
       staticDirectory: 'static',
-      output: {
-        filename: 'js/[name].[hash:8].js',
-        chunkFilename: 'js/[name].[chunkhash:8].js'
-      },
+
+      devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000', // 你的后端Express服务地址
+        changeOrigin: true, // 开启跨域
+        pathRewrite: { '^/api': '' } // 去掉/api前缀
+      }
+    }
+  },
       miniCssExtractPluginOption: {
         ignoreOrder: true,
         filename: 'css/[name].[hash].css',

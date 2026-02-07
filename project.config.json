@@ -1,7 +1,7 @@
 {
   "miniprogramRoot": "./dist",
-  "projectname": "Yisu-Hotel-M",
-  "description": "易宿酒店预订平台手机端",
+  "projectname": "yisu",
+  "description": "酒店详情页",
   "appid": "touristappid",
   "setting": {
     "urlCheck": true,
