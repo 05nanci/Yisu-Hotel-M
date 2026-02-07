@@ -894,7 +894,7 @@ export default function Index () {
                   <Text className='filter-close' onClick={() => setShowFilter(false)}>✕</Text>
                 </View>
                 
-                <View className='filter-body'>
+                <ScrollView className='filter-body' scrollY>
                   {currentFilterType === 'star' && (
                     <View className='filter-options'>
                       {['不限', '5星', '4星', '3星', '2星及以下'].map(star => (
@@ -936,7 +936,7 @@ export default function Index () {
                       ))}
                     </View>
                   )}
-                </View>
+                </ScrollView>
                 
                 <View className='filter-footer'>
                   <Button className='filter-confirm-btn' onClick={() => setShowFilter(false)}>

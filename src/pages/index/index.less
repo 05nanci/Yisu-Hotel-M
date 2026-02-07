@@ -604,18 +604,18 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding-top: 10vh;
   z-index: 1000;
 }
 
 .filter-content {
   width: 100%;
   max-width: 600px;
-  height: 70%;
+  max-height: 80vh;
   background-color: white;
   border-radius: 20px;
-  padding-bottom: env(safe-area-inset-bottom, 20px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
@@ -646,6 +646,7 @@
   flex: 1;
   overflow-y: auto;
   padding: 20px;
+  max-height: 400px;
 }
 
 .filter-options {
@@ -681,18 +682,15 @@
 }
 
 .filter-footer {
-  padding: 16px 20px;
+  padding: 20px;
   border-top: 1px solid #f0f0f0;
   background-color: white;
-  margin-top: auto;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-  padding-bottom: env(safe-area-inset-bottom, 16px);
+  display: flex;
+  justify-content: center;
 }
 
 .filter-confirm-btn {
-  width: 100%;
+  width: 200px;
   height: 48px;
   background-color: #1890ff;
   color: white;
