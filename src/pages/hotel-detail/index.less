@@ -1,0 +1,825 @@
+.hotel-detail-page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(135deg, #f5f5f5, #e6f7ff);
+  min-height: 100vh;
+  padding-bottom: 20rpx;
+
+  /* 筛选面板 */
+  .filter-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 32rpx 32rpx 0 0;
+    box-shadow: 0 -8rpx 32rpx rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideInUp 0.4s ease;
+  }
+  .filter-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24rpx;
+    border-bottom: 1rpx solid #f5f5f5;
+    background-color: #f9f9f9;
+    border-radius: 32rpx 32rpx 0 0;
+  }
+  .filter-panel-title {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #333;
+  }
+  .filter-panel-close {
+    font-size: 40rpx;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 8rpx;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+
+    &:active {
+      transform: scale(1.2);
+      color: #333;
+      background-color: #e9ecef;
+    }
+  }
+  .filter-panel-content {
+    flex: 1;
+    padding: 24rpx;
+  }
+  .filter-section {
+    margin-bottom: 32rpx;
+  }
+  .filter-section-title {
+    font-size: 28rpx;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16rpx;
+    padding-left: 12rpx;
+    border-left: 6rpx solid #1890ff;
+  }
+  .filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16rpx;
+  }
+  .filter-option {
+    background: #f8f9fa;
+    color: #666;
+    padding: 14rpx 28rpx;
+    border-radius: 28rpx;
+    font-size: 24rpx;
+    cursor: pointer;
+    border: 2rpx solid #e9ecef;
+    transition: all 0.3s ease;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+
+    &:active {
+      transform: scale(0.95);
+      background-color: #e9ecef;
+    }
+  }
+  .filter-option.selected {
+    background: linear-gradient(135deg, #1890ff, #40a9ff);
+    color: #fff;
+    border-color: #1890ff;
+    box-shadow: 0 4rpx 16rpx rgba(24, 144, 255, 0.3);
+    transform: translateY(-2rpx);
+  }
+  .filter-panel-footer {
+    display: flex;
+    padding: 24rpx;
+    border-top: 1rpx solid #f5f5f5;
+    gap: 16rpx;
+    background-color: #f9f9f9;
+  }
+  .filter-reset-btn {
+    flex: 1;
+    background: #f8f9fa;
+    color: #666;
+    padding: 16rpx;
+    border-radius: 16rpx;
+    font-size: 28rpx;
+    text-align: center;
+    cursor: pointer;
+    border: 2rpx solid #e9ecef;
+    transition: all 0.3s ease;
+
+    &:active {
+      background-color: #e9ecef;
+      transform: translateY(2rpx);
+    }
+  }
+  .filter-confirm-btn {
+    flex: 2;
+    background: linear-gradient(135deg, #1890ff, #40a9ff);
+    color: #fff;
+    padding: 16rpx;
+    border-radius: 16rpx;
+    font-size: 28rpx;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 4rpx 16rpx rgba(24, 144, 255, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    &:active {
+      background: linear-gradient(135deg, #40a9ff, #69c0ff);
+      transform: translateY(2rpx);
+      box-shadow: 0 2rpx 8rpx rgba(24, 144, 255, 0.3);
+    }
+
+    &:active::before {
+      left: 100%;
+    }
+  }
+
+  /* 返回按钮样式 */
+  .back-btn {
+    padding: 20rpx 24rpx;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+    border-radius: 0 0 20rpx 20rpx;
+    transition: all 0.3s ease;
+
+    &:active {
+      background-color: #f8f9fa;
+    }
+  }
+  .back-icon {
+    font-size: 36rpx;
+    color: #333;
+    margin-right: 8rpx;
+  }
+  .back-text {
+    font-size: 28rpx;
+    color: #333;
+    font-weight: 500;
+  }
+
+  /* 加载中样式 */
+  .loading-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 24rpx;
+    background-color: #f5f5f5;
+  }
+  .loading-text {
+    font-size: 32rpx;
+    color: #666;
+    font-weight: 500;
+  }
+
+  /* 顶部轮播图 */
+  .banner-swiper {
+    width: 100%;
+    height: 400rpx;
+    border-radius: 0 0 32rpx 32rpx;
+    overflow: hidden;
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+
+    .banner-img {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.5s ease;
+    }
+
+    &:active .banner-img {
+      transform: scale(1.05);
+    }
+
+    .banner-room-tag {
+      position: absolute;
+      top: 32rpx;
+      left: 32rpx;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
+      color: #333;
+      padding: 12rpx 24rpx;
+      border-radius: 24rpx;
+      font-size: 24rpx;
+      font-weight: 600;
+      box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(8rpx);
+    }
+
+    .banner-room-desc {
+      position: absolute;
+      top: 80rpx;
+      left: 32rpx;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      padding: 8rpx 20rpx;
+      border-radius: 20rpx;
+      font-size: 22rpx;
+      backdrop-filter: blur(8rpx);
+    }
+  }
+
+  /* 酒店名称+标签 */
+  .hotel-header {
+    padding: 24rpx 24rpx 16rpx;
+    background-color: #fff;
+    border-radius: 32rpx;
+    margin: 16rpx;
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+
+    .hotel-name {
+      font-size: 36rpx;
+      font-weight: 600;
+      color: #333;
+      display: block;
+      line-height: 1.3;
+      margin-bottom: 12rpx;
+    }
+
+    .hotel-tag {
+      background: linear-gradient(135deg, #ffd166, #ffdc80);
+      color: #333;
+      padding: 6rpx 20rpx;
+      border-radius: 16rpx;
+      font-size: 22rpx;
+      font-weight: 500;
+      display: inline-block;
+      box-shadow: 0 2rpx 8rpx rgba(255, 209, 102, 0.3);
+    }
+  }
+
+  /* 设施图标栏 */
+  .facilities-row {
+    padding: 20rpx 24rpx;
+    display: flex;
+    align-items: center;
+    gap: 36rpx;
+    background-color: #fff;
+    border-radius: 24rpx;
+    margin: 0 16rpx 16rpx;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+
+    .facility-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.3s ease;
+      padding: 12rpx;
+      border-radius: 12rpx;
+
+      &:active {
+        background-color: #f8f9fa;
+        transform: translateY(-2rpx);
+      }
+
+      .facility-icon {
+        font-size: 40rpx;
+        margin-bottom: 8rpx;
+      }
+
+      .facility-text {
+        font-size: 22rpx;
+        color: #666;
+        font-weight: 500;
+      }
+    }
+
+    .facility-more {
+      margin-left: auto;
+      font-size: 24rpx;
+      color: #1890ff;
+      font-weight: 500;
+      padding: 8rpx 16rpx;
+      border-radius: 16rpx;
+      background-color: #e6f7ff;
+      transition: all 0.3s ease;
+
+      &:active {
+        background-color: #bae7ff;
+        transform: translateY(-2rpx);
+      }
+    }
+  }
+
+  /* 评分+位置栏 */
+  .score-address-row {
+    padding: 24rpx;
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    border-radius: 24rpx;
+    margin: 0 16rpx 16rpx;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+
+    .score-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8rpx;
+
+      .score {
+        font-size: 40rpx;
+        font-weight: 700;
+        color: #06d6a0;
+      }
+
+      .score-level {
+        font-size: 24rpx;
+        color: #666;
+        font-weight: 500;
+      }
+
+      .comment-count {
+        font-size: 22rpx;
+        color: #1890ff;
+        font-weight: 500;
+        transition: all 0.3s ease;
+
+        &:active {
+          color: #40a9ff;
+        }
+      }
+
+      .score-desc {
+        font-size: 24rpx;
+        color: #666;
+        font-weight: 500;
+      }
+    }
+
+    .address-block {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 8rpx;
+
+      .distance {
+        font-size: 24rpx;
+        color: #666;
+        font-weight: 500;
+      }
+
+      .address {
+        font-size: 24rpx;
+        color: #333;
+        font-weight: 500;
+        line-height: 1.4;
+      }
+
+      .map-btn {
+        background: linear-gradient(135deg, #1890ff, #40a9ff);
+        color: #fff;
+        padding: 8rpx 20rpx;
+        border-radius: 16rpx;
+        font-size: 22rpx;
+        font-weight: 500;
+        display: inline-block;
+        margin-top: 8rpx;
+        box-shadow: 0 4rpx 12rpx rgba(24, 144, 255, 0.3);
+        transition: all 0.3s ease;
+
+        &:active {
+          background: linear-gradient(135deg, #40a9ff, #69c0ff);
+          transform: translateY(2rpx);
+          box-shadow: 0 2rpx 6rpx rgba(24, 144, 255, 0.3);
+        }
+      }
+    }
+  }
+
+  /* 优惠标签栏 */
+  .discount-row {
+    padding: 20rpx 24rpx;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16rpx;
+    background-color: #fff;
+    border-radius: 24rpx;
+    margin: 0 16rpx 16rpx;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+
+    .discount-tag {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      color: #666;
+      padding: 8rpx 20rpx;
+      border-radius: 20rpx;
+      font-size: 22rpx;
+      font-weight: 500;
+      border: 2rpx solid #e9ecef;
+      transition: all 0.3s ease;
+
+      &:active {
+        background: linear-gradient(135deg, #e9ecef, #dee2e6);
+        transform: scale(0.95);
+      }
+    }
+
+    .coupon-btn {
+      margin-left: auto;
+      background: linear-gradient(135deg, #ff6b6b, #ff8787);
+      color: #fff;
+      padding: 10rpx 24rpx;
+      border-radius: 20rpx;
+      font-size: 22rpx;
+      font-weight: 600;
+      box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
+      transition: all 0.3s ease;
+
+      &:active {
+        background: linear-gradient(135deg, #ff8787, #ffa8a8);
+        transform: translateY(2rpx);
+        box-shadow: 0 2rpx 6rpx rgba(255, 107, 107, 0.3);
+      }
+    }
+  }
+
+  /* 日期+房间人数栏 */
+  .date-guest-row {
+    padding: 24rpx;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 24rpx;
+    margin: 0 16rpx 16rpx;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+
+    .date-part {
+      display: flex;
+      flex-direction: column;
+      gap: 8rpx;
+
+      .date {
+        font-size: 28rpx;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .night {
+        font-size: 22rpx;
+        color: #666;
+        font-weight: 500;
+      }
+    }
+
+    .guest {
+      font-size: 24rpx;
+      color: #333;
+      font-weight: 500;
+      padding: 12rpx 20rpx;
+      background-color: #f8f9fa;
+      border-radius: 16rpx;
+    }
+  }
+
+  /* 房型筛选栏 */
+  .room-filter-row {
+    padding: 16rpx 24rpx;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16rpx;
+    background-color: #fff;
+    border-radius: 24rpx;
+    margin: 0 16rpx 16rpx;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+
+    .filter-tag {
+      background: #f8f9fa;
+      color: #666;
+      padding: 10rpx 24rpx;
+      border-radius: 24rpx;
+      font-size: 24rpx;
+      font-weight: 500;
+      cursor: pointer;
+      border: 2rpx solid #e9ecef;
+      transition: all 0.3s ease;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+
+      &:active {
+        background-color: #e9ecef;
+        transform: scale(0.95);
+      }
+    }
+
+    .filter-tag.selected {
+      background: linear-gradient(135deg, #1890ff, #40a9ff);
+      color: #fff;
+      border-color: #1890ff;
+      box-shadow: 0 4rpx 16rpx rgba(24, 144, 255, 0.3);
+      transform: translateY(-2rpx);
+    }
+
+    .filter-more {
+      margin-left: auto;
+      font-size: 24rpx;
+      color: #666;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 10rpx 20rpx;
+      background-color: #f8f9fa;
+      border-radius: 20rpx;
+      border: 2rpx solid #e9ecef;
+      transition: all 0.3s ease;
+
+      &:active {
+        background-color: #e9ecef;
+        transform: scale(0.95);
+      }
+    }
+  }
+
+  /* 房型列表 */
+  .room-list {
+    padding: 0 16rpx;
+
+    .recommend-tag {
+      font-size: 24rpx;
+      color: #ff6b6b;
+      margin-bottom: 20rpx;
+      font-weight: 500;
+      padding: 12rpx 16rpx;
+      background-color: #fff5f5;
+      border-radius: 16rpx;
+      border-left: 6rpx solid #ff6b6b;
+
+      .tag-icon {
+        margin-right: 8rpx;
+        font-size: 20rpx;
+      }
+    }
+
+    .room-item {
+      display: flex;
+      background: #fff;
+      border-radius: 24rpx;
+      box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      margin-bottom: 20rpx;
+      transition: all 0.3s ease;
+      border: 2rpx solid #f8f9fa;
+
+      &:active {
+        transform: translateY(-4rpx);
+        box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+      }
+
+      .room-img {
+        width: 240rpx;
+        height: 200rpx;
+        border-radius: 24rpx 0 0 24rpx;
+        transition: transform 0.5s ease;
+
+        .room-item:active & {
+          transform: scale(1.05);
+        }
+      }
+
+      .room-info {
+        flex: 1;
+        padding: 20rpx;
+        display: flex;
+        flex-direction: column;
+        gap: 12rpx;
+
+        .room-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+
+          .room-name {
+            font-size: 28rpx;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+            margin-right: 12rpx;
+          }
+
+          .room-code {
+            font-size: 22rpx;
+            color: #999;
+            font-weight: 400;
+          }
+        }
+
+        .room-desc, .room-note, .room-service {
+          font-size: 22rpx;
+          color: #666;
+          line-height: 1.4;
+        }
+
+        .room-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8rpx;
+
+          .tag {
+            background: linear-gradient(135deg, #e6f7ff, #bae7ff);
+            color: #0288d1;
+            padding: 6rpx 16rpx;
+            border-radius: 12rpx;
+            font-size: 20rpx;
+            font-weight: 500;
+            border: 1rpx solid #91d5ff;
+          }
+        }
+
+        .price-book-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          margin-top: auto;
+
+          .price-part {
+            display: flex;
+            flex-direction: column;
+            gap: 4rpx;
+
+            .original-price {
+              font-size: 22rpx;
+              color: #999;
+              text-decoration: line-through;
+              font-weight: 400;
+            }
+
+            .current-price {
+              font-size: 36rpx;
+              font-weight: 700;
+              color: #ff4d4f;
+            }
+
+            .discount-info {
+              font-size: 20rpx;
+              color: #666;
+              font-weight: 400;
+            }
+          }
+
+          .book-btn {
+            background: linear-gradient(135deg, #ff4d4f, #ff7875);
+            color: #fff;
+            padding: 12rpx 32rpx;
+            border-radius: 20rpx;
+            font-size: 24rpx;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4rpx 16rpx rgba(255, 77, 79, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+
+            &::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: -100%;
+              width: 100%;
+              height: 100%;
+              background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+              transition: left 0.6s ease;
+            }
+
+            &:active {
+              background: linear-gradient(135deg, #ff7875, #ffa39e);
+              transform: translateY(2rpx);
+              box-shadow: 0 2rpx 8rpx rgba(255, 77, 79, 0.3);
+            }
+
+            &:active::before {
+              left: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* 动画效果 */
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 375px) {
+  .hotel-detail-page {
+    .banner-swiper {
+      height: 320rpx;
+    }
+
+    .hotel-header {
+      padding: 20rpx;
+      margin: 12rpx;
+    }
+
+    .hotel-name {
+      font-size: 32rpx !important;
+    }
+
+    .facilities-row {
+      padding: 16rpx;
+      gap: 24rpx;
+      margin: 0 12rpx 12rpx;
+    }
+
+    .score-address-row {
+      padding: 20rpx;
+      margin: 0 12rpx 12rpx;
+    }
+
+    .discount-row {
+      padding: 16rpx;
+      margin: 0 12rpx 12rpx;
+    }
+
+    .date-guest-row {
+      padding: 20rpx;
+      margin: 0 12rpx 12rpx;
+    }
+
+    .room-filter-row {
+      padding: 12rpx 16rpx;
+      gap: 12rpx;
+      margin: 0 12rpx 12rpx;
+    }
+
+    .room-list {
+      padding: 0 12rpx;
+
+      .room-item {
+        .room-img {
+          width: 200rpx;
+          height: 160rpx;
+        }
+
+        .room-info {
+          padding: 16rpx;
+        }
+
+        .room-name {
+          font-size: 26rpx !important;
+        }
+
+        .book-btn {
+          padding: 10rpx 24rpx;
+          font-size: 22rpx !important;
+        }
+      }
+    }
+  }
+}
+
+/* 横屏模式适配 */
+@media (orientation: landscape) {
+  .hotel-detail-page {
+    .banner-swiper {
+      height: 240rpx;
+    }
+
+    .room-item {
+      flex-direction: row;
+
+      .room-img {
+        width: 280rpx;
+        height: 200rpx;
+      }
+    }
+  }
+}

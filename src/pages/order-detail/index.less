@@ -1,0 +1,429 @@
+.order-detail-page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 120px;
+}
+
+.order-detail-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 16px;
+  color: #666;
+  background-color: white;
+  margin: 20px 16px;
+  border-radius: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.order-detail-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 16px;
+  color: #666;
+  background-color: white;
+  margin: 20px 16px;
+  border-radius: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  text-align: center;
+  
+  button {
+    margin-top: 24px;
+    padding: 12px 32px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #1890ff, #40a9ff);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3);
+    transition: all 0.3s ease;
+
+    &:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+    }
+  }
+}
+
+.order-status-section {
+  background: linear-gradient(135deg, #1890ff, #40a9ff);
+  color: white;
+  padding: 32px 24px;
+  margin: 20px 16px;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.order-status {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.status-pending {
+  color: #ff9800;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.status-desc {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.section-header {
+  padding: 16px 20px;
+  background-color: #f8f9fa;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  border-radius: 24px 24px 0 0;
+}
+
+.hotel-info-section,
+.booking-info-section,
+.price-section,
+.order-meta-section {
+  background-color: white;
+  margin: 12px 16px;
+  border-radius: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:active {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.hotel-info {
+  padding: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  &:active {
+    background-color: #f8f9fa;
+  }
+  
+  .hotel-name {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333;
+    line-height: 1.4;
+  }
+  
+  .hotel-address {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+  }
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+  
+  &:active {
+    background-color: #f8f9fa;
+  }
+  
+  .info-label {
+    font-size: 15px;
+    color: #666;
+    font-weight: 500;
+  }
+  
+  .info-value {
+    font-size: 15px;
+    color: #333;
+    font-weight: 500;
+    text-align: right;
+    flex: 1;
+    margin-left: 20px;
+  }
+  
+  &.total {
+    border-bottom: none;
+    padding: 20px;
+    background-color: #f8f9fa;
+    
+    .info-label {
+      font-size: 17px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .info-value {
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
+}
+
+.total-price {
+  color: #ff4d4f;
+  text-shadow: 0 1px 2px rgba(255, 77, 79, 0.2);
+}
+
+.discount {
+  color: #52c41a;
+  font-weight: 600;
+}
+
+.action-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  padding: 20px 16px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 16px;
+  border-radius: 32px 32px 0 0;
+  
+  button {
+    flex: 1;
+    padding: 14px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    &:active::before {
+      left: 100%;
+    }
+
+    &:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .cancel-btn {
+    background-color: white;
+    color: #666;
+    border: 2px solid #d9d9d9;
+
+    &:active {
+      border-color: #ff4d4f;
+      color: #ff4d4f;
+    }
+  }
+  
+  .pay-btn {
+    background: linear-gradient(135deg, #ff4d4f, #ff7875);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 16px rgba(255, 77, 79, 0.3);
+
+    &:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3);
+    }
+  }
+  
+  .view-btn {
+    background: linear-gradient(135deg, #1890ff, #40a9ff);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3);
+
+    &:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+    }
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 375px) {
+  .order-detail-page {
+    padding-bottom: 100px;
+  }
+
+  .order-status-section {
+    padding: 24px 20px;
+    margin: 16px 12px;
+  }
+
+  .order-status {
+    font-size: 20px;
+  }
+
+  .hotel-info-section,
+  .booking-info-section,
+  .price-section,
+  .order-meta-section {
+    margin: 10px 12px;
+  }
+
+  .section-header {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+
+  .hotel-info {
+    padding: 16px;
+  }
+
+  .hotel-name {
+    font-size: 16px !important;
+  }
+
+  .hotel-address {
+    font-size: 13px !important;
+  }
+
+  .info-item {
+    padding: 14px 16px;
+  }
+
+  .info-label,
+  .info-value {
+    font-size: 14px !important;
+  }
+
+  .info-item.total {
+    padding: 16px;
+  }
+
+  .info-item.total .info-label {
+    font-size: 15px !important;
+  }
+
+  .info-item.total .info-value {
+    font-size: 16px !important;
+  }
+
+  .action-section {
+    padding: 16px 12px;
+    gap: 12px;
+  }
+
+  .action-section button {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .order-detail-loading,
+  .order-detail-empty {
+    margin: 16px 12px;
+    padding: 32px 16px;
+  }
+}
+
+/* 横屏模式适配 */
+@media (orientation: landscape) {
+  .order-status-section {
+    margin: 20px;
+  }
+
+  .hotel-info-section,
+  .booking-info-section,
+  .price-section,
+  .order-meta-section {
+    margin: 16px 20px;
+  }
+
+  .action-section {
+    padding: 16px 20px;
+  }
+
+  .order-detail-loading,
+  .order-detail-empty {
+    margin: 20px;
+  }
+}
+
+/* 动画效果 */
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.order-status-section {
+  animation: slideInUp 0.5s ease;
+}
+
+.hotel-info-section,
+.booking-info-section,
+.price-section,
+.order-meta-section {
+  animation: fadeIn 0.5s ease;
+  animation-fill-mode: both;
+}
+
+.hotel-info-section {
+  animation-delay: 0.1s;
+}
+
+.booking-info-section {
+  animation-delay: 0.2s;
+}
+
+.price-section {
+  animation-delay: 0.3s;
+}
+
+.order-meta-section {
+  animation-delay: 0.4s;
+}
+
+.action-section {
+  animation: slideInUp 0.5s ease;
+  animation-delay: 0.5s;
+  animation-fill-mode: both;
+}
+
+.order-detail-loading,
+.order-detail-empty {
+  animation: fadeIn 0.5s ease;
+}
+
