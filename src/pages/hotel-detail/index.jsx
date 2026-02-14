@@ -206,12 +206,16 @@ export default function HotelDetail() {
 
       {/* 设施图标栏 */}
       <View className="facilities-row">
-        {hotelData.facilities && hotelData.facilities.slice(0, 4).map((facility, idx) => (
-          <Text key={idx} className="facility-item">
-            <Text className="facility-icon">📋</Text>
-            <Text className="facility-text">{facility}</Text>
-          </Text>
-        ))}
+        {hotelData.facilities && hotelData.facilities.slice(0, 4).map((facility, idx) => {
+          // 确保facility是字符串
+          const facilityText = typeof facility === 'object' ? (facility.name || facility.label || JSON.stringify(facility)) : facility;
+          return (
+            <Text key={idx} className="facility-item">
+              <Text className="facility-icon">📋</Text>
+              <Text className="facility-text">{facilityText}</Text>
+            </Text>
+          );
+        })}
         {(!hotelData.facilities || hotelData.facilities.length === 0) && (
           <>
             <Text className="facility-item">
@@ -252,9 +256,13 @@ export default function HotelDetail() {
 
       {/* 优惠标签栏 */}
       <View className="discount-row">
-        {(hotelData.tags || hotelData.discountTags || []).slice(0, 3).map((tag, idx) => (
-          <Text key={idx} className="discount-tag">{tag}</Text>
-        ))}
+        {(hotelData.tags || hotelData.discountTags || []).slice(0, 3).map((tag, idx) => {
+          // 确保tag是字符串
+          const tagText = typeof tag === 'object' ? (tag.name || tag.label || JSON.stringify(tag)) : tag;
+          return (
+            <Text key={idx} className="discount-tag">{tagText}</Text>
+          );
+        })}
         <Text className="coupon-btn">领券</Text>
       </View>
 
@@ -322,9 +330,13 @@ export default function HotelDetail() {
               <Text className="room-note">{room.note || '入住时间14:00后 | 退房时间12:00前'}</Text>
               {room.service && <Text className="room-service">{room.service}</Text>}
               <View className="room-tags">
-                {(room.amenities || room.tags || []).slice(0, 3).map((item, idx) => (
-                  <Text key={idx} className="tag">{item}</Text>
-                ))}
+                {(room.amenities || room.tags || []).slice(0, 3).map((item, idx) => {
+                  // 确保item是字符串
+                  const itemText = typeof item === 'object' ? (item.name || item.label || JSON.stringify(item)) : item;
+                  return (
+                    <Text key={idx} className="tag">{itemText}</Text>
+                  );
+                })}
               </View>
               <View className="price-book-row">
                 <View className="price-part">

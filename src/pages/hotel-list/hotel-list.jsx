@@ -363,11 +363,15 @@ export default function HotelList () {
           <Text className='hotel-address'>{hotel.address}</Text>
           
           <View className='hotel-amenities'>
-            {hotel.amenities && hotel.amenities.slice(0, 3).map((amenity, index) => (
-              <View key={index} className='amenity-tag'>
-                <Text className='amenity-text'>{amenity}</Text>
-              </View>
-            ))}
+            {hotel.amenities && hotel.amenities.slice(0, 3).map((amenity, index) => {
+              // 确保amenity是字符串
+              const amenityText = typeof amenity === 'object' ? (amenity.name || amenity.label || JSON.stringify(amenity)) : amenity;
+              return (
+                <View key={index} className='amenity-tag'>
+                  <Text className='amenity-text'>{amenityText}</Text>
+                </View>
+              );
+            })}
           </View>
           
           <View className='hotel-bottom'>
