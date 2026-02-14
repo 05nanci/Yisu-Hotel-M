@@ -1,0 +1,166 @@
+.date-selector-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.date-selector-content {
+  background-color: #fff;
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.date-selector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.date-selector-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.date-selector-close {
+  font-size: 36rpx;
+  color: #999;
+  padding: 8rpx;
+}
+
+.date-range-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 30rpx;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #f9f9f9;
+}
+
+.range-info-item {
+  font-size: 28rpx;
+  color: #666;
+  display: block;
+  flex: 1;
+  text-align: center;
+}
+
+.calendar-header-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 30rpx;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.month-nav-btn {
+  background: transparent;
+  border: none;
+  font-size: 32rpx;
+  color: #1890ff;
+  padding: 8rpx 16rpx;
+}
+
+.current-month {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.week-header {
+  display: flex;
+  justify-content: space-around;
+  padding: 16rpx 0;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #f5f5f5;
+}
+
+.week-day {
+  font-size: 26rpx;
+  color: #666;
+  width: 14.28%;
+  text-align: center;
+}
+
+.date-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16rpx 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.date-cell {
+  width: 14.28%;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.date-text {
+  font-size: 28rpx;
+  color: #333;
+  padding: 8rpx;
+  border-radius: 50%;
+}
+
+.today .date-text {
+  background-color: #e6f7ff;
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.check-in .date-text {
+  background-color: #1890ff;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 50% 0 0 50%;
+}
+
+.check-out .date-text {
+  background-color: #1890ff;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0 50% 50% 0;
+}
+
+.in-range {
+  background-color: #e6f7ff;
+}
+
+.disabled .date-text {
+  color: #ccc;
+}
+
+.other-month .date-text {
+  color: #ccc;
+}
+
+.date-selector-footer {
+  padding: 20rpx 30rpx;
+  border-top: 1px solid #f0f0f0;
+}
+
+.date-selector-confirm-btn {
+  width: 80%;
+  margin: 0 auto;
+  padding: 16rpx;
+  border: 1px solid #1890ff;
+  border-radius: 8rpx;
+  background-color: #1890ff;
+  font-size: 28rpx;
+  color: #fff;
+}

@@ -1,0 +1,313 @@
+.booking-confirm-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-top: 120rpx;
+
+  .back-button {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    color: #000;
+    padding: 30rpx 40rpx;
+    background-color: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    width: 100%;
+    box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+
+    .back-icon {
+      font-size: 36rpx;
+    }
+
+    .back-text {
+      font-size: 32rpx;
+    }
+
+    &:active {
+      background-color: #f0f0f0;
+    }
+  }
+
+  .header-section {
+    background-color: #fff;
+    padding: 40rpx;
+    margin-bottom: 20rpx;
+
+    .hotel-name {
+      font-size: 36rpx;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 30rpx;
+      display: block;
+    }
+
+    .booking-dates {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30rpx;
+      font-size: 32rpx;
+      color: #333;
+
+      .nights {
+        margin-left: 20rpx;
+        color: #666;
+      }
+
+      .room-detail-link {
+        margin-left: auto;
+        color: #007aff;
+        font-size: 28rpx;
+      }
+    }
+
+    .room-info {
+      font-size: 30rpx;
+      color: #666;
+      margin-bottom: 30rpx;
+    }
+
+    .cancel-policy {
+      display: flex;
+      gap: 30rpx;
+
+      .policy-item {
+        display: flex;
+        align-items: center;
+        gap: 10rpx;
+        font-size: 26rpx;
+        color: #07c160;
+      }
+    }
+  }
+
+  .tip-bar {
+    background-color: #fff9e8;
+    padding: 20rpx 40rpx;
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+    color: #ff976a;
+    font-size: 28rpx;
+    margin-bottom: 20rpx;
+  }
+
+  .booking-info-section,
+  .benefits-section,
+  .special-requests-section,
+  .invoice-section {
+    background-color: #fff;
+    padding: 40rpx;
+    margin-bottom: 20rpx;
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10rpx;
+      font-size: 32rpx;
+      color: #333;
+      margin-bottom: 30rpx;
+
+      .final-price {
+        margin-left: auto;
+        color: #ff6b35;
+        font-weight: bold;
+      }
+    }
+
+    .remaining-rooms {
+      display: flex;
+      align-items: center;
+      margin-bottom: 40rpx;
+
+      .red {
+        color: #ff4d4f;
+        font-size: 30rpx;
+      }
+
+      .quantity-selector {
+        display: flex;
+        align-items: center;
+        gap: 20rpx;
+        margin-left: auto;
+
+        text {
+          font-size: 32rpx;
+          color: #333;
+        }
+      }
+    }
+
+    .form-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 40rpx;
+
+      .label {
+        width: 160rpx;
+        font-size: 30rpx;
+        color: #333;
+      }
+
+      input {
+        flex: 1;
+        font-size: 30rpx;
+        color: #333;
+      }
+
+      .phone-input {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 20rpx;
+
+        text {
+          font-size: 30rpx;
+          color: #333;
+        }
+
+        input {
+          flex: 1;
+        }
+      }
+    }
+
+    .phone-tip {
+      background-color: #f0f8ff;
+      padding: 20rpx;
+      border-radius: 8rpx;
+      font-size: 26rpx;
+      color: #666;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .benefit-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24rpx 0;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      text {
+        font-size: 30rpx;
+        color: #333;
+      }
+
+      .benefit-value {
+        display: flex;
+        align-items: center;
+        gap: 10rpx;
+        color: #666;
+        font-size: 28rpx;
+      }
+    }
+
+    .request-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20rpx;
+
+      .request-tag {
+        padding: 16rpx 24rpx;
+        background-color: #f5f5f5;
+        border-radius: 8rpx;
+        font-size: 28rpx;
+        color: #666;
+
+        &.selected {
+          background-color: #e6f7ff;
+          color: #1890ff;
+        }
+      }
+
+      .more-requests {
+        display: flex;
+        align-items: center;
+        gap: 10rpx;
+        font-size: 28rpx;
+        color: #007aff;
+      }
+    }
+
+    .invoice-info {
+      display: flex;
+      align-items: center;
+      gap: 10rpx;
+      font-size: 30rpx;
+      color: #333;
+    }
+  }
+
+  // 核心修改：缩小底部在线付区域
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    // 减小底部栏整体内边距（原20rpx 40rpx）
+    padding: 15rpx 30rpx;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 -4rpx 20rpx rgba(200, 130, 130, 0.1);
+
+    .price-info {
+      flex: 1;
+
+      text {
+        // 减小"在线付"字体（原28rpx）
+        font-size: 24rpx;
+        color: #666;
+        display: block;
+        // 减小间距（原10rpx）
+        margin-bottom: 6rpx;
+
+        &.final-price {
+          // 减小最终价格字体（原44rpx）
+          font-size: 36rpx;
+          color: #ff6b35;
+          font-weight: bold;
+        }
+      }
+
+      .price-detail {
+        display: flex;
+        align-items: center;
+        // 减小间距（原10rpx）
+        gap: 8rpx;
+        // 减小明细字体（原24rpx）
+        font-size: 20rpx;
+        color: #999;
+
+        .new-user-tag {
+          background-color: #ff6b35;
+          color: #fff;
+          // 减小标签内边距（原4rpx 12rpx）
+          padding: 2rpx 8rpx;
+          border-radius: 4rpx;
+          // 减小标签字体（原22rpx）
+          font-size: 18rpx;
+        }
+      }
+    }
+
+    .pay-btn {
+      background-color: #007aff;
+      color: #fff;
+      border: none;
+      border-radius: 50rpx;
+      // 减小按钮内边距（原24rpx 60rpx）
+      padding: 10rpx 20rpx;
+      // 减小按钮字体（原32rpx）
+      font-size: 28rpx;
+    }
+  }
+}

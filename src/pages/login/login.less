@@ -1,0 +1,351 @@
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f5f5, #e6f7ff);
+  padding: 60rpx 32rpx;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 300rpx;
+    background: linear-gradient(135deg, #1890ff, #40a9ff);
+    border-radius: 0 0 60rpx 60rpx;
+    box-shadow: 0 4rpx 32rpx rgba(24, 144, 255, 0.3);
+    z-index: 0;
+  }
+
+  /* 顶部标题 */
+  .login-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 60rpx;
+    position: relative;
+    z-index: 1;
+  }
+  .login-title {
+    font-size: 40rpx;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+    margin-bottom: 16rpx;
+  }
+  .login-subtitle {
+    font-size: 24rpx;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.2);
+  }
+
+  /* 登录表单 */
+  .login-form {
+    background: white;
+    border-radius: 32rpx;
+    padding: 48rpx 32rpx;
+    margin-bottom: 40rpx;
+    box-shadow: 0 8rpx 40rpx rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+    
+    &:active {
+      transform: translateY(-4rpx);
+      box-shadow: 0 12rpx 56rpx rgba(0, 0, 0, 0.15);
+    }
+  }
+  .form-item {
+    margin-bottom: 40rpx;
+  }
+  .phone-input-container {
+    display: flex;
+    align-items: center;
+    border-bottom: 2rpx solid #e8e8e8;
+    padding-bottom: 20rpx;
+    transition: all 0.3s ease;
+    
+    &:active {
+      border-bottom-color: #1890ff;
+    }
+  }
+  .country-code {
+    font-size: 28rpx;
+    color: #333;
+    margin-right: 20rpx;
+    font-weight: 500;
+  }
+  .phone-input {
+    flex: 1;
+    font-size: 28rpx;
+    color: #333;
+    height: 60rpx;
+    line-height: 60rpx;
+  }
+  .password-input-container {
+    display: flex;
+    align-items: center;
+    border-bottom: 2rpx solid #e8e8e8;
+    padding-bottom: 20rpx;
+    transition: all 0.3s ease;
+    
+    &:active {
+      border-bottom-color: #1890ff;
+    }
+  }
+  .password-input {
+    flex: 1;
+    font-size: 28rpx;
+    color: #333;
+    height: 60rpx;
+    line-height: 60rpx;
+  }
+  .password-toggle {
+    font-size: 24rpx;
+    color: #1890ff;
+    cursor: pointer;
+    padding: 12rpx 16rpx;
+    border-radius: 16rpx;
+    transition: all 0.3s ease;
+    
+    &:active {
+      background-color: #e6f7ff;
+      transform: translateY(2rpx);
+    }
+  }
+  .forgot-password {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12rpx;
+  }
+  .forgot-password-text {
+    font-size: 24rpx;
+    color: #1890ff;
+    cursor: pointer;
+    padding: 8rpx 16rpx;
+    border-radius: 16rpx;
+    transition: all 0.3s ease;
+    
+    &:active {
+      background-color: #e6f7ff;
+      transform: translateY(2rpx);
+    }
+  }
+  .remember-password-container {
+    display: flex;
+    align-items: center;
+  }
+  .remember-password-text {
+    font-size: 24rpx;
+    color: #333;
+    margin-left: 16rpx;
+    font-weight: 500;
+  }
+  .error-message {
+    font-size: 22rpx;
+    color: #ff4d4f;
+    margin-top: 12rpx;
+    padding-left: 8rpx;
+    font-weight: 500;
+  }
+  .login-btn {
+    width: 100%;
+    height: 90rpx;
+    border-radius: 45rpx;
+    font-size: 30rpx;
+    font-weight: 600;
+    background: linear-gradient(135deg, #1890ff, #40a9ff);
+    color: white;
+    margin-top: 24rpx;
+    border: none;
+    box-shadow: 0 8rpx 32rpx rgba(24, 144, 255, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    &:active::before {
+      left: 100%;
+    }
+    
+    &:active {
+      transform: translateY(4rpx);
+      box-shadow: 0 4rpx 16rpx rgba(24, 144, 255, 0.4);
+    }
+  }
+
+  /* 底部快捷入口 */
+  .login-footer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32rpx;
+    position: relative;
+    z-index: 1;
+  }
+  .register-text {
+    font-size: 26rpx;
+    color: #666;
+    font-weight: 500;
+  }
+  .register-link {
+    color: #1890ff;
+    margin-left: 12rpx;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 8rpx 16rpx;
+    border-radius: 16rpx;
+    transition: all 0.3s ease;
+    
+    &:active {
+      background-color: #e6f7ff;
+      transform: translateY(2rpx);
+    }
+  }
+
+  /* 安全提示 */
+  .safety-tip {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+    margin-bottom: 20rpx;
+  }
+  .safety-tip-text {
+    font-size: 22rpx;
+    color: #999;
+    text-align: center;
+    line-height: 1.4;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 375px) {
+  .login-page {
+    padding: 40rpx 24rpx;
+  }
+  
+  .login-header {
+    margin-bottom: 40rpx;
+  }
+  
+  .login-title {
+    font-size: 36rpx;
+  }
+  
+  .login-form {
+    padding: 36rpx 24rpx;
+    margin-bottom: 32rpx;
+  }
+  
+  .form-item {
+    margin-bottom: 32rpx;
+  }
+  
+  .phone-input,
+  .password-input {
+    font-size: 26rpx;
+    height: 52rpx;
+    line-height: 52rpx;
+  }
+  
+  .login-btn {
+    height: 80rpx;
+    border-radius: 40rpx;
+    font-size: 28rpx;
+  }
+  
+  .register-text {
+    font-size: 24rpx;
+  }
+  
+  .safety-tip-text {
+    font-size: 20rpx;
+  }
+}
+
+/* 横屏模式适配 */
+@media (orientation: landscape) {
+  .login-page {
+    padding: 40rpx 48rpx;
+  }
+  
+  .login-header {
+    margin-bottom: 32rpx;
+  }
+  
+  .login-title {
+    font-size: 32rpx;
+  }
+  
+  .login-form {
+    padding: 32rpx 32rpx;
+    margin-bottom: 24rpx;
+  }
+  
+  .form-item {
+    margin-bottom: 24rpx;
+  }
+  
+  .login-btn {
+    height: 72rpx;
+    border-radius: 36rpx;
+    font-size: 26rpx;
+  }
+}
+
+/* 动画效果 */
+@keyframes slideInUp {
+  from {
+    transform: translateY(60rpx);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.login-header {
+  animation: slideInUp 0.5s ease-out;
+}
+
+.login-form {
+  animation: slideInUp 0.5s ease-out;
+  animation-delay: 0.1s;
+  animation-fill-mode: both;
+}
+
+.login-footer {
+  animation: fadeIn 0.5s ease-out;
+  animation-delay: 0.2s;
+  animation-fill-mode: both;
+}
+
+.safety-tip {
+  animation: fadeIn 0.5s ease-out;
+  animation-delay: 0.3s;
+  animation-fill-mode: both;
+}
