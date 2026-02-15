@@ -14,44 +14,20 @@ export default function MyPage () {
     const checkLoginStatus = async () => {
       const loggedIn = Taro.getStorageSync('isLoggedIn')
       const token = Taro.getStorageSync('token')
+      const userInfo = Taro.getStorageSync('userInfo')
       
-      if (loggedIn && token) {
-        try {
-          // 尝试使用不同的API方法获取用户信息
-          let response;
-          try {
-            response = await userApi.getProfile();
-          } catch (e) {
-            try {
-              response = await userApi.getUserInfo();
-            } catch (e2) {
-              throw e2;
-            }
-          }
-          
-          if (response.code === 0 && response.data) {
-            const userData = response.data
-            setIsLoggedIn(true)
-            setUserInfo(userData)
-            // 更新本地存储的用户信息
-            Taro.setStorageSync('userInfo', userData)
-          } else {
-            // 获取用户信息失败，可能是token过期
-            Taro.setStorageSync('isLoggedIn', false)
-            Taro.setStorageSync('token', '')
-            Taro.setStorageSync('userInfo', null)
-            setIsLoggedIn(false)
-            setUserInfo(null)
-          }
-        } catch (error) {
-          console.error('获取用户信息失败:', error)
-          // 网络错误或其他问题，保持本地存储的状态
-          const info = Taro.getStorageSync('userInfo')
-          if (info) {
-            setIsLoggedIn(true)
-            setUserInfo(info)
-          }
-        }
+      console.log('检查登录状态:', {
+        loggedIn,
+        token: token ? '存在' : '不存在',
+        userInfo: userInfo ? '存在' : '不存在'
+      })
+      
+      if (loggedIn || userInfo) {
+        setIsLoggedIn(true)
+        setUserInfo(userInfo)
+      } else {
+        setIsLoggedIn(false)
+        setUserInfo(null)
       }
     }
     checkLoginStatus()

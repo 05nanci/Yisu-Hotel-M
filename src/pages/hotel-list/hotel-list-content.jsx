@@ -107,7 +107,7 @@ export default function HotelListContent ({ searchParams }) {
   const renderHotelItem = useCallback((hotel) => {
     return (
       <View key={hotel.id} className='hotel-item'>
-        <Image className='hotel-image' src={hotel.imageUrl || 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20hotel%20exterior%20building%20architecture&image_size=square'} />
+        <Image className='hotel-image' src={hotel.imageUrl && !hotel.imageUrl.includes('example.com') ? hotel.imageUrl : 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20hotel%20exterior%20building%20architecture&image_size=square'} />
         <View className='hotel-info'>
           <View className='hotel-header'>
             <Text className='hotel-name'>{hotel.name}</Text>

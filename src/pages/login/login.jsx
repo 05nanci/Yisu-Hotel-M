@@ -46,11 +46,26 @@ export default function Login() {
         password
       });
       
+      console.log('登录响应:', response);
+      
       if (response.code === 0 && response.data) {
         // 登录成功，保存token和用户信息
+        console.log('保存登录状态:', {
+          token: response.data.token,
+          isLoggedIn: true,
+          userInfo: response.data.user
+        });
+        
         Taro.setStorageSync('token', response.data.token);
         Taro.setStorageSync('isLoggedIn', true);
         Taro.setStorageSync('userInfo', response.data.user);
+        
+        // 验证保存是否成功
+        console.log('验证登录状态保存:', {
+          token: Taro.getStorageSync('token'),
+          isLoggedIn: Taro.getStorageSync('isLoggedIn'),
+          userInfo: Taro.getStorageSync('userInfo')
+        });
         
         // 跳转到首页
         Taro.switchTab({
