@@ -40,12 +40,15 @@ export default function FavoritesPage () {
       
       if (response.code === 0 && response.data) {
         // 处理不同的数据结构
-        const favoritesData = response.data.favorites || response.data || []
+        const favoritesData = response.data.favorites || response.data.list || response.data || []
         console.log('处理后的收藏数据:', favoritesData)
         setFavorites(favoritesData)
+      } else if (response.code === 4008) {
+        // Token 无效或已过期，已经在API服务层处理了跳转到登录页的逻辑
+        // 这里不需要重复处理
       } else {
         Taro.showToast({
-          title: response.message || '获取收藏列表失败',
+          title: response.msg || response.message || '获取收藏列表失败',
           icon: 'none'
         })
       }
@@ -117,9 +120,12 @@ export default function FavoritesPage () {
                 title: '已取消收藏',
                 icon: 'success'
               })
+            } else if (response.code === 4008) {
+              // Token 无效或已过期，已经在API服务层处理了跳转到登录页的逻辑
+              // 这里不需要重复处理
             } else {
               Taro.showToast({
-                title: response.message || '取消收藏失败',
+                title: response.msg || response.message || '取消收藏失败',
                 icon: 'none'
               })
             }
@@ -170,35 +176,32 @@ export default function FavoritesPage () {
           </View>
         ) : favorites.length > 0 ? (
           favorites.map(item => {
-            // 处理不同的数据结构
-            const hotel = item.hotel || item
             console.log('渲染的收藏项:', item)
-            console.log('处理后的酒店数据:', hotel)
             return (
-              <View key={hotel.id || hotel.hotel_id} className='favorite-item'>
+              <View key={item.hotel_id || item.id} className='favorite-item'>
                 <Image 
                   className='hotel-image' 
-                  src={(hotel.image && !hotel.image.includes('example.com')) ? hotel.image : ((hotel.hotel_image && !hotel.hotel_image.includes('example.com')) ? hotel.hotel_image : 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20exterior%20default%20placeholder&image_size=square')} 
+                  src={((item.main_image_url && !item.main_image_url.includes('example.com')) ? item.main_image_url : ((item.hotel_image && !item.hotel_image.includes('example.com')) ? item.hotel_image : ((item.image && !item.image.includes('example.com')) ? item.image : 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20exterior%20default%20placeholder&image_size=square')))} 
                 />
                 <View className='hotel-info'>
                   <View className='hotel-header'>
-                    <Text className='hotel-name'>{hotel.name || hotel.hotel_name_cn}</Text>
+                    <Text className='hotel-name'>{item.hotel_name || item.name || item.hotel_name_cn}</Text>
                     <View 
                       className='unfavorite-btn' 
-                      onClick={() => handleUnfavorite(hotel.id || hotel.hotel_id)}
+                      onClick={() => handleUnfavorite(item.hotel_id || item.id)}
                     >
                       <Text className='unfavorite-icon'>★</Text>
                     </View>
                   </View>
-                  <Text className='hotel-address'>{hotel.address || hotel.nearby_info || hotel.location}</Text>
+                  <Text className='hotel-address'>{item.hotel_address || item.address || item.nearby_info || item.location}</Text>
                   <View className='hotel-footer'>
                     <View className='hotel-price'>
                       <Text className='price-symbol'>¥</Text>
-                      <Text className='price-value'>{hotel.price || hotel.min_price || hotel.rate}</Text>
+                      <Text className='price-value'>{item.price || item.min_price || item.rate || 0}</Text>
                       <Text className='price-unit'>/晚</Text>
                     </View>
                     <View className='hotel-rating'>
-                      <Text className='rating-value'>{hotel.rating || hotel.score}</Text>
+                      <Text className='rating-value'>{item.rating || item.score || 0}</Text>
                       <Text className='rating-label'>分</Text>
                     </View>
                   </View>

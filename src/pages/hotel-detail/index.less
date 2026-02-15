@@ -240,7 +240,7 @@
     }
   }
 
-  /* 酒店名称+标签 */
+  /* 酒店名称+标签+收藏按钮 */
   .hotel-header {
     padding: 24rpx 24rpx 16rpx;
     background-color: #fff;
@@ -248,13 +248,59 @@
     margin: 16rpx;
     box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
 
+    .hotel-name-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12rpx;
+    }
+
     .hotel-name {
       font-size: 36rpx;
       font-weight: 600;
       color: #333;
-      display: block;
       line-height: 1.3;
-      margin-bottom: 12rpx;
+      flex: 1;
+      margin-right: 16rpx;
+    }
+
+    .collect-btn {
+      display: flex;
+      align-items: center;
+      gap: 8rpx;
+      padding: 10rpx 20rpx;
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      border-radius: 24rpx;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+
+      &:active {
+        background: linear-gradient(135deg, #e9ecef, #dee2e6);
+        transform: scale(0.95);
+      }
+    }
+
+    .collect-icon {
+      font-size: 24rpx;
+      color: #ffc107;
+      transition: all 0.3s ease;
+
+      &.collected {
+        color: #ff9800;
+        text-shadow: 0 2rpx 4rpx rgba(255, 152, 0, 0.3);
+      }
+    }
+
+    .collect-text {
+      font-size: 22rpx;
+      color: #666;
+      font-weight: 500;
+      transition: all 0.3s ease;
+
+      .collect-btn:active & {
+        color: #333;
+      }
     }
 
     .hotel-tag {
