@@ -67,9 +67,9 @@ export default function Login() {
           userInfo: Taro.getStorageSync('userInfo')
         });
         
-        // 跳转到首页
+        // 跳转到个人中心页面，验证登录状态
         Taro.switchTab({
-          url: '/pages/index/index'
+          url: '/pages/my/my'
         });
       } else {
         // 登录失败
