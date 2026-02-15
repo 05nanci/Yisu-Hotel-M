@@ -22,7 +22,7 @@ export default function MyPage () {
         userInfo: userInfo ? '存在' : '不存在'
       })
       
-      if (loggedIn || userInfo) {
+      if (loggedIn || token || userInfo) {
         setIsLoggedIn(true)
         setUserInfo(userInfo)
       } else {
