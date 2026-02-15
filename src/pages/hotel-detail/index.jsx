@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Taro from '@tarojs/taro';
 import { View, Text, Image, ScrollView, Swiper, SwiperItem } from '@tarojs/components';
-import { hotelApi } from '../../services/api';
+import { hotelApi, favoriteApi } from '../../services/api';
 import './index.less';
 
 // 移除模拟数据，只使用从后端API获取的数据
@@ -18,6 +18,8 @@ export default function HotelDetail() {
     facilities: [],
     services: []
   });
+  // 收藏状态
+  const [isCollected, setIsCollected] = useState(false);
 
   useEffect(() => {
     const fetchHotelDetail = async () => {
@@ -162,6 +164,87 @@ export default function HotelDetail() {
     });
   };
 
+  // 处理收藏按钮点击
+  const handleCollectClick = async () => {
+    try {
+      // 检查用户是否已登录
+      const token = Taro.getStorageSync('token');
+      if (!token) {
+        // 用户未登录，跳转到登录页
+        Taro.showToast({
+          title: '请先登录',
+          icon: 'none'
+        });
+        Taro.navigateTo({
+          url: '/pages/login/login'
+        });
+        return;
+      }
+
+      if (isCollected) {
+        // 取消收藏
+        const { id } = Taro.getCurrentInstance().router?.params || {};
+        if (!id) {
+          Taro.showToast({
+            title: '酒店ID不能为空',
+            icon: 'none'
+          });
+          return;
+        }
+
+        const response = await favoriteApi.removeFavorite(id);
+        if (response.code === 0) {
+          setIsCollected(false);
+          Taro.showToast({
+            title: '已取消收藏',
+            icon: 'success'
+          });
+        } else if (response.code === 4008) {
+          // Token 无效或已过期，已经在API服务层处理了跳转到登录页的逻辑
+          // 这里不需要重复处理
+        } else {
+          Taro.showToast({
+            title: response.msg || response.message || '取消收藏失败',
+            icon: 'none'
+          });
+        }
+      } else {
+        // 添加收藏
+        const { id } = Taro.getCurrentInstance().router?.params || {};
+        if (!id) {
+          Taro.showToast({
+            title: '酒店ID不能为空',
+            icon: 'none'
+          });
+          return;
+        }
+
+        const response = await favoriteApi.addFavorite(id);
+        if (response.code === 0) {
+          setIsCollected(true);
+          Taro.showToast({
+            title: '收藏成功',
+            icon: 'success'
+          });
+        } else if (response.code === 4008) {
+          // Token 无效或已过期，已经在API服务层处理了跳转到登录页的逻辑
+          // 这里不需要重复处理
+        } else {
+          Taro.showToast({
+            title: response.msg || response.message || '收藏失败',
+            icon: 'none'
+          });
+        }
+      }
+    } catch (error) {
+      console.error('收藏操作失败:', error);
+      Taro.showToast({
+        title: error.message || '操作失败，请检查网络连接',
+        icon: 'none'
+      });
+    }
+  };
+
   // 加载中状态
   if (loading) {
     return (
@@ -198,9 +281,18 @@ export default function HotelDetail() {
         ))}
       </Swiper>
 
-      {/* 酒店名称+标签 */}
+      {/* 酒店名称+标签+收藏按钮 */}
       <View className="hotel-header">
-        <Text className="hotel-name">{hotelData.name || hotelData.hotelInfo?.name || '酒店名称'}</Text>
+        <View className="hotel-name-container">
+          <Text className="hotel-name">{hotelData.name || hotelData.hotelInfo?.name || '酒店名称'}</Text>
+          <View 
+            className="collect-btn" 
+            onClick={handleCollectClick}
+          >
+            <Text className={`collect-icon ${isCollected ? 'collected' : ''}`}>★</Text>
+            <Text className="collect-text">{isCollected ? '已收藏' : '收藏'}</Text>
+          </View>
+        </View>
         <Text className="hotel-tag">{hotelData.star_rating ? `${hotelData.star_rating}星级` : hotelData.hotelInfo?.tag || '酒店标签'}</Text>
       </View>
 

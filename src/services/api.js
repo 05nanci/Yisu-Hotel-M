@@ -18,11 +18,10 @@ async function request(url, options = {}) {
     };
     
     // 添加认证token（如果有）
-    // 暂时注释掉，避免后端服务器崩溃
-    // const token = Taro.getStorageSync('token');
-    // if (token) {
-    //   defaultHeaders['Authorization'] = `Bearer ${token}`;
-    // }
+    const token = Taro.getStorageSync('token');
+    if (token) {
+      defaultHeaders['Authorization'] = `Bearer ${token}`;
+    }
     
     // 准备请求选项
     const requestOptions = {
@@ -73,6 +72,11 @@ async function request(url, options = {}) {
             title: responseData.msg || '登录已过期，请重新登录',
             icon: 'none'
           });
+          // 清除本地存储的token
+          Taro.removeStorageSync('token');
+          Taro.removeStorageSync('isLoggedIn');
+          Taro.removeStorageSync('userInfo');
+          // 跳转到登录页
           setTimeout(() => {
             Taro.navigateTo({ url: '/pages/login/login' });
           }, 1500);
