@@ -159,7 +159,7 @@ export default function HistoryPage () {
               <View key={item.id} className='history-item'>
                 <Image 
                   className='item-image' 
-                  src={hotel.image || 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20exterior%20default%20placeholder&image_size=square'} 
+                  src={hotel.image && !hotel.image.includes('example.com') ? hotel.image : 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20exterior%20default%20placeholder&image_size=square'} 
                 />
                 <View className='item-info'>
                   <View className='item-header'>

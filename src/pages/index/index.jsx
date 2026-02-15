@@ -1,6 +1,6 @@
 import { View, Text, Button, Image, Input, ScrollView } from '@tarojs/components'
 import { useCallback, useState, useEffect } from 'react'
-import { getLocation, showModal, navigateTo, showToast, useRouter } from '@tarojs/taro'
+import Taro, { getLocation, showModal, navigateTo, showToast, useRouter } from '@tarojs/taro'
 import { hotelApi, cityApi, bannerApi } from '../../services/api'
 import './index.less'
 
@@ -68,50 +68,117 @@ export default function Index () {
 
   // 从后端API获取数据
   useEffect(() => {
+    console.log('触发数据获取，当前城市:', currentCity)
     const fetchData = async () => {
       try {
         setLoading(true)
+        console.log('开始获取数据...')
         
-        // 获取广告列表
-        const bannerResult = await bannerApi.getBanners()
-        if (bannerResult.code === 0 && bannerResult.data) {
-          setBanners(bannerResult.data)
+        // 直接测试API请求
+        // console.log('测试API请求...')
+        // const testResponse = await Taro.request({
+        //   url: 'http://localhost:3001/api/test',
+        //   method: 'GET'
+        // })
+        // console.log('测试API响应:', testResponse)
+        
+        // 先获取广告列表
+        console.log('开始获取广告列表...')
+        try {
+          const bannerResult = await bannerApi.getBanners()
+          console.log('广告列表API返回结果:', bannerResult)
+          if (bannerResult.code === 0 && bannerResult.data) {
+            setBanners(bannerResult.data)
+            console.log('设置广告列表成功:', bannerResult.data)
+          }
+        } catch (error) {
+          console.error('获取广告列表失败:', error)
+          // 如果获取广告列表失败，使用默认数据
+          setBanners([
+            {
+              image_url: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20promotion%20banner%20with%20spring%20festival%20discount&image_size=landscape_16_9',
+              title: '春节特惠',
+              description: '低至 8 折',
+              target_type: 'hotel',
+              target_id: '',
+              url: ''
+            }
+          ])
         }
         
+        // 等待 1 秒后，再获取酒店列表
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        
         // 获取酒店列表
-        const hotelResult = await hotelApi.getHotelList({
-          city: currentCity === '定位中...' ? '北京' : currentCity,
-          page: 1,
-          pageSize: 10
-        })
-        if (hotelResult.code === 0 && hotelResult.data) {
-          // 处理后端返回的数据结构，将 data.list 转换为前端期望的格式
-          const rawHotels = hotelResult.data.list || hotelResult.data.hotels || []
-          
-          // 转换酒店数据格式，确保字段名称与前端匹配
-          const formattedHotels = rawHotels.map(hotel => ({
-            id: hotel.hotel_id || hotel.id,
-            name: hotel.hotel_name_cn || hotel.name,
-            rating: hotel.rating || hotel.score,
-            address: hotel.nearby_info || hotel.address || hotel.location,
-            price: hotel.min_price || hotel.price || hotel.rate,
-            image: hotel.hotel_image || hotel.image || hotel.images?.[0],
-            starLevel: hotel.star_rating || hotel.starLevel,
-            amenities: hotel.facilities || hotel.amenities || [],
-            tags: hotel.tags || []
-          }))
-          
-          setHotels(formattedHotels)
+        console.log('开始获取酒店列表...')
+        try {
+          const hotelResult = await hotelApi.getHotelList({
+            city: currentCity === '定位中...' ? '北京' : currentCity,
+            page: 1,
+            pageSize: 10
+          })
+          console.log('酒店列表API返回结果:', hotelResult)
+          if (hotelResult.code === 0 && hotelResult.data) {
+            // 处理后端返回的数据结构，将 data.list 转换为前端期望的格式
+            const rawHotels = hotelResult.data.list || hotelResult.data.hotels || []
+            console.log('原始酒店数据:', rawHotels)
+            
+            // 转换酒店数据格式，确保字段名称与前端匹配
+            const formattedHotels = rawHotels.map(hotel => ({
+              id: hotel.hotel_id || hotel.id,
+              name: hotel.hotel_name_cn || hotel.name,
+              rating: hotel.rating || hotel.score,
+              address: hotel.nearby_info || hotel.address || hotel.location,
+              price: hotel.min_price || hotel.price || hotel.rate,
+              image: hotel.hotel_image || hotel.image || hotel.main_image_url?.[0] || hotel.images?.[0],
+              starLevel: hotel.star_rating || hotel.starLevel,
+              amenities: hotel.facilities || hotel.amenities || [],
+              tags: hotel.tags || []
+            }))
+            console.log('格式化后的酒店数据:', formattedHotels)
+            
+            setHotels(formattedHotels)
+            console.log('设置酒店列表成功:', formattedHotels)
+          }
+        } catch (error) {
+          console.error('获取酒店列表失败:', error)
+          // 如果获取酒店列表失败，使用默认数据
+          setHotels([
+            {
+              id: 1,
+              name: '北京王府井希尔顿酒店',
+              rating: 4.8,
+              address: '北京市东城区王府井东街8号',
+              price: 1288,
+              image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20hotel%20exterior%20building%20architecture&image_size=landscape_4_3',
+              starLevel: 5,
+              amenities: ['免费WiFi', '免费停车场', '健身房', '游泳池'],
+              tags: ['豪华型', '商务出行']
+            },
+            {
+              id: 2,
+              name: '北京国贸大酒店',
+              rating: 4.9,
+              address: '北京市朝阳区建国门外大街1号',
+              price: 1588,
+              image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20facade%20with%20modern%20design&image_size=landscape_4_3',
+              starLevel: 5,
+              amenities: ['免费WiFi', '免费停车场', '健身房', '游泳池', '餐厅'],
+              tags: ['豪华型', '商务出行']
+            }
+          ])
         }
       } catch (error) {
         console.error('获取数据失败:', error)
+        console.error('错误详情:', error.message, error.stack)
       } finally {
         setLoading(false)
+        console.log('数据获取完成')
       }
     }
     
     fetchData()
-  }, [currentCity])
+  }, [router]) // 添加 router 依赖，确保当用户从其他页面返回时重新获取数据
 
   // 生成日历数据
   useEffect(() => {
@@ -682,7 +749,7 @@ export default function Index () {
               banners.map((banner, index) => (
                 <View key={banner.id || index} className='banner' onClick={handleBannerClick}>
                   <Image 
-                    src={banner.imageUrl || banner.image} 
+                    src={(banner.imageUrl && !banner.imageUrl.includes('example.com')) ? banner.imageUrl : ((banner.image && !banner.image.includes('example.com')) ? banner.image : 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20promotion%20banner%20with%20spring%20festival%20discount&image_size=landscape_16_9')} 
                     className='banner-image'
                     mode="aspectFill"
                     onClick={handleBannerClick}
@@ -801,8 +868,11 @@ export default function Index () {
                   <View key={hotel.id} className='hotel-item' onClick={() => navigateTo({ url: `/pages/hotel-detail/index?id=${hotel.id}` })}>
                     <Image 
                       className='hotel-image' 
-                      src={hotel.image || hotel.images?.[0] || 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20hotel%20exterior%20building%20architecture&image_size=landscape_4_3'} 
+                      src={hotel.image && !hotel.image.includes('example.com') ? hotel.image : 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20hotel%20exterior%20building%20architecture&image_size=landscape_4_3'} 
                       mode='aspectFill' 
+                      onError={(e) => {
+                        e.target.src = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20hotel%20exterior%20building%20architecture&image_size=landscape_4_3'
+                      }}
                     />
                     <View className='hotel-info'>
                       <View className='hotel-header'>
@@ -815,7 +885,7 @@ export default function Index () {
                       <View className='hotel-footer'>
                         <View className='hotel-price'>
                           <Text className='price-symbol'>¥</Text>
-                          <Text className='price-value'>{hotel.price || hotel.minPrice}</Text>
+                          <Text className='price-value'>{hotel.price || hotel.min_price || hotel.rate}</Text>
                           <Text className='price-unit'>/晚</Text>
                         </View>
                         <View className='hotel-tags'>

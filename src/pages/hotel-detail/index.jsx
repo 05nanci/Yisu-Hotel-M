@@ -5,40 +5,7 @@ import { View, Text, Image, ScrollView, Swiper, SwiperItem } from '@tarojs/compo
 import { hotelApi } from '../../services/api';
 import './index.less';
 
-// 模拟数据（包含id=1的酒店，匹配你当前URL参数）
-const mockHotelData = {
-  "1": {
-    bannerList: ['https://img95.699pic.com/photo/50120/2224.jpg_wh860.jpg'],
-    hotelInfo: {
-      name: '北京王府井希尔顿酒店',
-      tag: '优享会',
-      openYear: '2019年开业',
-      features: ['免费WiFi', '停车场'],
-      score: 4.8,
-      commentCount: 128,
-      scoreDesc: '环境干净舒适',
-      distance: '距地铁站0.5km',
-      address: '北京市东城区王府井东街8号'
-    },
-    discountTags: ['订房优惠', '首住特惠'],
-    dateRange: '2月8日 - 2月9日',
-    stayNight: '1晚',
-    roomGuest: '1间 1人',
-    roomList: [
-      {
-        id: 'room1',
-        name: '舒适大床房',
-        desc: '1张1.8米床',
-        note: '入住时间14:00后 | 退房时间12:00前',
-        service: '免费WiFi | 免费停车 | 空调 | 电视',
-        tags: ['免费取消', '含早餐'],
-        originalPrice: 289,
-        currentPrice: 189,
-        img: 'https://img95.699pic.com/photo/50120/2225.jpg_wh300.jpg'
-      }
-    ]
-  }
-};
+// 移除模拟数据，只使用从后端API获取的数据
 
 export default function HotelDetail() {
   // 修复：使用 React 原生 useState
@@ -70,20 +37,51 @@ export default function HotelDetail() {
         }
 
         // 调用API获取酒店详情
-        try {
-          const response = await hotelApi.getHotelDetail(id);
-          if (response.code === 0 && response.data) {
-            setHotelData(response.data);
-          } else {
-            // 使用模拟数据作为兜底
-            const data = mockHotelData[id] || mockHotelData["1"];
-            setHotelData(data);
+        console.log('开始获取酒店详情，ID:', id);
+        const response = await hotelApi.getHotelDetail(id);
+        console.log('获取酒店详情响应:', response);
+        
+        if (response.code === 0 && response.data) {
+          // 处理后端返回的数据结构，确保与前端期望的数据结构匹配
+          // 处理图片数组，确保它是一个数组
+          let imagesArray = [];
+          if (response.data.bannerList) {
+            imagesArray = Array.isArray(response.data.bannerList) ? response.data.bannerList : response.data.bannerList.split(',');
+          } else if (response.data.images) {
+            imagesArray = Array.isArray(response.data.images) ? response.data.images : response.data.images.split(',');
+          } else if (response.data.main_image_url || response.data.image) {
+            imagesArray = [response.data.main_image_url || response.data.image];
           }
-        } catch (error) {
-          // API调用失败时使用模拟数据
-          console.warn('API调用失败，使用模拟数据:', error);
-          const data = mockHotelData[id] || mockHotelData["1"];
-          setHotelData(data);
+          
+          // 过滤掉空字符串和example.com的图片
+          imagesArray = imagesArray.filter(img => img && !img.includes('example.com'));
+          
+          const processedData = {
+            id: response.data.id || response.data.hotel_id || id,
+            name: response.data.name || response.data.hotel_name_cn || '酒店名称',
+            star_rating: response.data.star_rating || response.data.starLevel || 0,
+            rating: response.data.rating || response.data.score || 0,
+            review_count: response.data.review_count || response.data.commentCount || 0,
+            address: response.data.address || response.data.location || '酒店地址',
+            facilities: response.data.facilities || response.data.amenities || [],
+            tags: response.data.tags || [],
+            main_image_url: response.data.main_image_url || response.data.image || imagesArray[0] || '',
+            bannerList: imagesArray,
+            room_types: response.data.room_types || response.data.rooms || []
+          };
+          console.log('处理后的酒店数据:', processedData);
+          setHotelData(processedData);
+        } else {
+          console.error('获取酒店详情失败，响应码:', response.code);
+          Taro.showToast({
+            title: response.message || '获取酒店详情失败',
+            icon: 'none',
+            duration: 2000
+          });
+          // 跳转到酒店列表页
+          setTimeout(() => {
+            Taro.navigateBack();
+          }, 1000);
         }
       } catch (error) {
         console.error('获取酒店详情失败:', error);
@@ -92,8 +90,10 @@ export default function HotelDetail() {
           icon: 'none',
           duration: 2000
         });
-        // 使用模拟数据作为最终兜底
-        setHotelData(mockHotelData["1"]);
+        // 跳转到酒店列表页
+        setTimeout(() => {
+          Taro.navigateBack();
+        }, 1000);
       } finally {
         setLoading(false);
       }
@@ -193,7 +193,7 @@ export default function HotelDetail() {
       <Swiper className="banner-swiper">
         {(hotelData.main_image_url || hotelData.bannerList || []).map((img, idx) => (
           <SwiperItem key={idx}>
-            <Image className="banner-img" src={img} mode="widthFix" />
+            <Image className="banner-img" src={img && !img.includes('example.com') ? img : 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20hotel%20exterior%20building%20architecture&image_size=landscape_16_9'} mode="widthFix" />
           </SwiperItem>
         ))}
       </Swiper>
@@ -320,7 +320,7 @@ export default function HotelDetail() {
         </View>
         {((hotelData.room_types || hotelData.roomList) || []).map((room) => (
           <View key={room.id} className="room-item">
-            <Image className="room-img" src={room.image_url || room.img || (hotelData.main_image_url && hotelData.main_image_url[0])} mode="widthFix" />
+            <Image className="room-img" src={room.image_url && !room.image_url.includes('example.com') ? room.image_url : (room.img && !room.img.includes('example.com') ? room.img : (hotelData.main_image_url && Array.isArray(hotelData.main_image_url) && hotelData.main_image_url[0] && !hotelData.main_image_url[0].includes('example.com') ? hotelData.main_image_url[0] : 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20room%20interior%20default%20placeholder&image_size=landscape_4_3'))} mode="widthFix" />
             <View className="room-info">
               <View className="room-header">
                 <Text className="room-name">{room.name}</Text>
@@ -340,8 +340,8 @@ export default function HotelDetail() {
               </View>
               <View className="price-book-row">
                 <View className="price-part">
-                  <Text className="original-price">¥{room.original_price || room.originalPrice || 0}</Text>
-                  <Text className="current-price">¥{room.price || room.currentPrice || 0}</Text>
+                  <Text className="original-price">¥{(room.prices && room.prices[0] && room.prices[0].original_price) || (room.original_price || room.originalPrice || 0)}</Text>
+                  <Text className="current-price">¥{(room.prices && room.prices[0] && room.prices[0].price) || (room.price || room.currentPrice || 0)}</Text>
                   <Text className="discount-info">新客体验钻石 会员出行 4项优惠</Text>
                 </View>
                 {/* 核心修改：跳转路径改为 /pages/booking-confirm/index */}

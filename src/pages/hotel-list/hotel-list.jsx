@@ -34,9 +34,47 @@ export default function HotelList () {
   const [collectedHotels, setCollectedHotels] = useState(new Set())
   const scrollViewRef = useRef(null)
 
+  // 初始化收藏状态
+  const initCollectedHotels = useCallback(async () => {
+    try {
+      // 检查用户是否已登录
+      const token = Taro.getStorageSync('token')
+      if (!token) {
+        // 用户未登录，使用空集合
+        setCollectedHotels(new Set())
+        return
+      }
+      
+      const response = await hotelApi.getCollectedHotels()
+      if (response.code === 0 && response.data) {
+        // 处理response.data可能不是数组的情况
+        const hotelsArray = Array.isArray(response.data) ? response.data : (response.data.favorites || response.data.list || [])
+        const collectedIds = hotelsArray.map(hotel => {
+          // 处理不同的数据结构
+          if (hotel.hotel) {
+            return hotel.hotel.id || hotel.hotel.hotel_id
+          }
+          return hotel.id || hotel.hotel_id
+        })
+        setCollectedHotels(new Set(collectedIds))
+      }
+    } catch (error) {
+      console.error('获取收藏列表失败', error)
+      // 检查是否是认证错误
+      if (error.message.includes('401') || error.message.includes('Token')) {
+        // 登录已过期，清除本地token并使用空集合
+        Taro.removeStorageSync('token')
+        Taro.removeStorageSync('isLoggedIn')
+      }
+      // 出错时不影响页面加载，使用空集合
+      setCollectedHotels(new Set())
+    }
+  }, [])
+
   // 初始化页面
   useEffect(() => {
     initPage()
+    initCollectedHotels()
   }, [router.query])
 
   // 当showFilter为true时，同步tempFilters为当前filters的值
@@ -69,7 +107,7 @@ export default function HotelList () {
           rating: hotel.rating || hotel.score,
           address: hotel.nearby_info || hotel.address || hotel.location,
           price: hotel.min_price || hotel.price || hotel.rate,
-          image: hotel.hotel_image || hotel.image || hotel.images?.[0],
+          image: hotel.hotel_image || hotel.image || hotel.main_image_url?.[0] || hotel.images?.[0],
           starLevel: hotel.star_rating || hotel.starLevel,
           amenities: hotel.facilities || hotel.amenities || [],
           tags: hotel.tags || []
@@ -200,27 +238,83 @@ export default function HotelList () {
   }, [])
 
   // 切换收藏状态
-  const handleCollect = useCallback((hotelId, e) => {
+  const handleCollect = useCallback(async (hotelId, e) => {
     e.stopPropagation()
     
-    setCollectedHotels(prev => {
-      const newCollected = new Set(prev)
-      if (newCollected.has(hotelId)) {
-        newCollected.delete(hotelId)
+    try {
+      // 检查用户是否已登录
+      const token = Taro.getStorageSync('token')
+      if (!token) {
+        // 用户未登录，提示登录
+        showToast({
+          title: '请先登录',
+          icon: 'none'
+        })
+        // 跳转到登录页
+        Taro.navigateTo({
+          url: '/pages/login/login'
+        })
+        return
+      }
+      
+      const isCurrentlyCollected = collectedHotels.has(hotelId)
+      
+      if (isCurrentlyCollected) {
+        // 取消收藏
+        await hotelApi.uncollectHotel(hotelId)
+        setCollectedHotels(prev => {
+          const newCollected = new Set(prev)
+          newCollected.delete(hotelId)
+          return newCollected
+        })
         showToast({
           title: '取消收藏成功',
           icon: 'success'
         })
       } else {
-        newCollected.add(hotelId)
+        // 收藏
+        await hotelApi.collectHotel(hotelId)
+        setCollectedHotels(prev => {
+          const newCollected = new Set(prev)
+          newCollected.add(hotelId)
+          return newCollected
+        })
         showToast({
           title: '收藏成功',
           icon: 'success'
         })
       }
-      return newCollected
-    })
-  }, [])
+    } catch (error) {
+      console.error('操作收藏失败', error)
+      // 检查是否是认证错误
+      if (error.message.includes('401') || error.message.includes('Token')) {
+        showToast({
+          title: '登录已过期，请重新登录',
+          icon: 'none'
+        })
+        // 跳转到登录页
+        Taro.navigateTo({
+          url: '/pages/login/login'
+        })
+      } else if (error.message.includes('400') && error.message.includes('已经收藏过')) {
+        // 处理已收藏的情况，更新本地状态
+        setCollectedHotels(prev => {
+          const newCollected = new Set(prev)
+          newCollected.add(hotelId)
+          return newCollected
+        })
+        showToast({
+          title: '该酒店已收藏',
+          icon: 'none'
+        })
+      } else {
+        showToast({
+          title: '操作失败，请稍后重试',
+          icon: 'none'
+        })
+      }
+    }
+  }, [collectedHotels])
 
   // 处理排序
   const handleSort = useCallback((type) => {
@@ -327,7 +421,7 @@ export default function HotelList () {
       >
         <View className='hotel-image-container'>
           <Image 
-            src={hotel.image} 
+            src={hotel.image && !hotel.image.includes('example.com') ? hotel.image : 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20room%20interior%20default%20placeholder&image_size=landscape_4_3'} 
             className='hotel-image'
             mode="aspectFill"
             onError={(e) => {
