@@ -1,0 +1,269 @@
+/* AI助手页面样式 */
+.ai-assistant-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+/* 头部 */
+.ai-assistant-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx;
+  background-color: #fff;
+  border-bottom: 1rpx solid #e0e0e0;
+  height: 88rpx;
+}
+
+.back-button {
+  padding: 10rpx;
+}
+
+.back-icon {
+  font-size: 32rpx;
+  color: #333;
+}
+
+.header-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.header-right {
+  width: 44rpx;
+}
+
+/* 聊天区域 */
+.chat-container {
+  flex: 1;
+  padding: 20rpx;
+}
+
+/* 欢迎信息 */
+.welcome-message {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.welcome-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 36rpx;
+}
+
+/* 快速问题 */
+.quick-questions {
+  margin-bottom: 30rpx;
+}
+
+.quick-questions-title {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.quick-questions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.quick-question-item {
+  background-color: #fff;
+  border: 1rpx solid #e0e0e0;
+  border-radius: 20rpx;
+  padding: 16rpx 24rpx;
+  font-size: 24rpx;
+  color: #333;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.quick-question-item:active {
+  background-color: #f5f5f5;
+  transform: scale(0.98);
+}
+
+/* 消息列表 */
+.messages-list {
+  margin-bottom: 20rpx;
+}
+
+.message-item {
+  display: flex;
+  margin-bottom: 24rpx;
+  align-items: flex-start;
+}
+
+.user-message {
+  flex-direction: row-reverse;
+}
+
+.assistant-message {
+  flex-direction: row;
+}
+
+.avatar-container {
+  margin: 0 12rpx;
+}
+
+.avatar {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.assistant-avatar {
+  background-color: #1890ff;
+  color: #fff;
+}
+
+.user-avatar {
+  background-color: #52c41a;
+  color: #fff;
+}
+
+.avatar-icon {
+  font-size: 24rpx;
+}
+
+.message-content {
+  max-width: 70%;
+  padding: 16rpx 20rpx;
+  border-radius: 16rpx;
+  background-color: #fff;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.05);
+}
+
+.user-message .message-content {
+  background-color: #1890ff;
+  color: #fff;
+}
+
+.assistant-message .message-content {
+  background-color: #fff;
+  color: #333;
+}
+
+.message-text {
+  font-size: 26rpx;
+  line-height: 36rpx;
+  margin-bottom: 8rpx;
+}
+
+.message-timestamp {
+  font-size: 18rpx;
+  color: #999;
+  text-align: right;
+}
+
+.user-message .message-timestamp {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 加载中 */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 10rpx 0;
+}
+
+.loading-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background-color: #1890ff;
+  animation: pulse 1.4s infinite ease-in-out both;
+}
+
+.loading-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes pulse {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* 输入区域 */
+.input-container {
+  display: flex;
+  align-items: center;
+  padding: 16rpx;
+  background-color: #fff;
+  border-top: 1rpx solid #e0e0e0;
+  gap: 12rpx;
+}
+
+.input-field {
+  flex: 1;
+  height: 64rpx;
+  border: 1rpx solid #e0e0e0;
+  border-radius: 32rpx;
+  padding: 0 24rpx;
+  font-size: 26rpx;
+  background-color: #f9f9f9;
+}
+
+.send-button {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background-color: #1890ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 8rpx rgba(24, 144, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.send-button:active {
+  transform: scale(0.95);
+}
+
+.send-button.disabled {
+  background-color: #d9d9d9;
+  box-shadow: none;
+}
+
+.send-icon {
+  font-size: 32rpx;
+  color: #fff;
+  font-weight: 600;
+}
+
+.send-button.disabled .send-icon {
+  color: #fff;
+}
+
+/* 响应式设计 */
+@media (max-width: 375px) {
+  .message-content {
+    max-width: 75%;
+  }
+  
+  .message-text {
+    font-size: 24rpx;
+  }
+}

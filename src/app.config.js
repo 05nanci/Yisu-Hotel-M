@@ -8,7 +8,11 @@ export default defineAppConfig({
     'pages/coupons/coupons', // 优惠券页面
     'pages/settings/settings', // 设置页面
     'pages/history/history', // 历史页面
-    'pages/hotel-list/hotel-list',
+    'pages/customer-service/customer-service', // 客服中心页面
+    'pages/help-center/help-center', // 帮助中心页面
+    'pages/terms/terms', // 用户协议页面
+    'pages/privacy/privacy', // 隐私政策页面
+    'pages/hotel-list-new/hotel-list-new',
     'pages/city-select/city-select',
     'pages/test-page/test-page',
     'pages/hotel-detail/index', // 酒店详情页
@@ -16,7 +20,8 @@ export default defineAppConfig({
     'pages/payment/index', // 支付页
     'pages/login/login', // 登录页
     'pages/register/register', // 注册页
-    'pages/register-success/register-success' // 注册成功页
+    'pages/register-success/register-success', // 注册成功页
+    'pages/ai-assistant/ai-assistant' // AI助手页面
   ],
   window: {
     backgroundTextStyle: 'light',
@@ -29,6 +34,8 @@ export default defineAppConfig({
     selectedColor: '#1890ff',
     backgroundColor: '#fff',
     borderStyle: 'black',
+    height: '60px',
+    iconWidth: '24px',
     list: [
       {
         pagePath: 'pages/index/index',

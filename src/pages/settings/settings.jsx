@@ -1,5 +1,5 @@
 import { View, Text, Switch } from '@tarojs/components'
-import { useCallback, useState, useEffect } from 'react'
+import { useCallback, useState } from 'react'
 import Taro from '@tarojs/taro'
 import './settings.less'
 
@@ -18,6 +18,9 @@ export default function SettingsPage () {
       ...prev,
       [key]: value
     }))
+    
+    // 打印当前开关状态
+    console.log(`${key} 开关状态: ${value ? '开启' : '关闭'}`)
     
     // 模拟保存设置
     Taro.showToast({
@@ -58,8 +61,8 @@ export default function SettingsPage () {
           Taro.removeStorageSync('isLoggedIn')
           Taro.removeStorageSync('token')
           
-          // 跳转到登录页面
-          Taro.navigateTo({
+          // 跳转到登录页面，使用redirectTo替换当前页面栈
+          Taro.redirectTo({
             url: '/pages/login/login'
           })
         }
@@ -69,26 +72,52 @@ export default function SettingsPage () {
 
   // 处理关于我们
   const handleAbout = useCallback(() => {
+    // 弹出关于我们的模态弹窗
     Taro.showModal({
       title: '关于我们',
       content: '易宿酒店预订平台 v1.0.0\n\n专注于为用户提供便捷的酒店预订服务，让您的旅行更加舒适。',
-      showCancel: false
+      showCancel: false,
+      confirmText: '我知道了',
+      maskClosable: true,
+      success: (res) => {
+        if (res.confirm) {
+          console.log('用户关闭了关于我们弹窗');
+        }
+      }
     })
   }, [])
 
   // 处理隐私政策
   const handlePrivacy = useCallback(() => {
-    Taro.showToast({
-      title: '跳转到隐私政策页面',
-      icon: 'none'
+    // 弹出全屏模态弹窗
+    Taro.showModal({
+      title: '隐私政策',
+      content: '易宿酒店尊重并保护用户隐私。我们收集的个人信息仅用于提供酒店预订服务，并采取严格的安全措施保护您的信息。我们不会向第三方分享您的个人信息，除非获得您的明确授权或法律要求。通过使用我们的服务，您同意我们按照本隐私政策处理您的信息。',
+      showCancel: false,
+      confirmText: '我知道了',
+      maskClosable: true,
+      success: (res) => {
+        if (res.confirm) {
+          console.log('用户关闭了隐私政策弹窗');
+        }
+      }
     })
   }, [])
 
   // 处理用户协议
   const handleTerms = useCallback(() => {
-    Taro.showToast({
-      title: '跳转到用户协议页面',
-      icon: 'none'
+    // 弹出全屏模态弹窗
+    Taro.showModal({
+      title: '用户协议',
+      content: '欢迎使用易宿酒店预订服务。本协议是您与易宿酒店之间关于使用我们服务的法律协议。请您仔细阅读本协议的全部内容，特别是限制或免除责任的条款。通过注册、登录、使用我们的服务，您表示同意接受本协议的全部条款和条件。如您不同意本协议的任何条款，您应立即停止使用我们的服务。',
+      showCancel: false,
+      confirmText: '我知道了',
+      maskClosable: true,
+      success: (res) => {
+        if (res.confirm) {
+          console.log('用户关闭了用户协议弹窗');
+        }
+      }
     })
   }, [])
 
@@ -105,8 +134,8 @@ export default function SettingsPage () {
         <Text className='page-title'>设置</Text>
       </View>
       
-      {/* 设置列表 */}
-      <View className='settings-list'>
+      {/* 设置列表 - 添加滚动功能 */}
+      <View className='settings-list' style={{ maxHeight: 'calc(100vh - 100px)', overflowY: 'auto', paddingBottom: '30px' }}>
         {/* 通知设置 */}
         <View className='setting-section'>
           <Text className='section-title'>通知设置</Text>
@@ -114,8 +143,12 @@ export default function SettingsPage () {
             <Text className='setting-label'>消息通知</Text>
             <Switch
               checked={settings.notifications}
-              onChange={(value) => handleSettingToggle('notifications', value)}
+              onChange={(e) => {
+                const value = e.detail.value;
+                handleSettingToggle('notifications', value);
+              }}
               className='setting-switch'
+              style={{ transform: 'scale(1)' }}
             />
           </View>
         </View>
@@ -127,8 +160,12 @@ export default function SettingsPage () {
             <Text className='setting-label'>位置服务</Text>
             <Switch
               checked={settings.location}
-              onChange={(value) => handleSettingToggle('location', value)}
+              onChange={(e) => {
+                const value = e.detail.value;
+                handleSettingToggle('location', value);
+              }}
               className='setting-switch'
+              style={{ transform: 'scale(1)' }}
             />
           </View>
         </View>
@@ -140,8 +177,12 @@ export default function SettingsPage () {
             <Text className='setting-label'>自动登录</Text>
             <Switch
               checked={settings.autoLogin}
-              onChange={(value) => handleSettingToggle('autoLogin', value)}
+              onChange={(e) => {
+                const value = e.detail.value;
+                handleSettingToggle('autoLogin', value);
+              }}
               className='setting-switch'
+              style={{ transform: 'scale(1)' }}
             />
           </View>
           <View 

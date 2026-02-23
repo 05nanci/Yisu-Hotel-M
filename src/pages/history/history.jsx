@@ -19,12 +19,25 @@ export default function HistoryPage () {
     try {
       setLoading(true)
       
+      // 检查用户是否已登录
+      const isLoggedIn = Taro.getStorageSync('isLoggedIn')
+      if (!isLoggedIn) {
+        // 用户未登录，显示空的历史记录列表
+        console.log('用户未登录，显示空的历史记录列表')
+        setHistory([])
+        return
+      }
+      
       // 调用后端API获取浏览历史
       const response = await historyApi.getHistory()
       
       if (response.code === 0 && response.data) {
         setHistory(response.data.history || [])
+      } else if (response.code === 4008) {
+        // Token 无效或已过期，已经在API服务层处理了跳转到登录页的逻辑
+        // 这里不需要重复处理
       } else {
+        // 用户已登录但获取失败，显示错误提示
         Taro.showToast({
           title: response.message || '获取浏览历史失败',
           icon: 'none'
@@ -32,10 +45,20 @@ export default function HistoryPage () {
       }
     } catch (error) {
       console.error('获取浏览历史失败:', error)
-      Taro.showToast({
-        title: error.message || '获取浏览历史失败，请检查网络连接',
-        icon: 'none'
-      })
+      
+      // 检查用户是否已登录
+      const isLoggedIn = Taro.getStorageSync('isLoggedIn')
+      if (!isLoggedIn) {
+        // 用户未登录，显示空的历史记录列表
+        console.log('用户未登录，显示空的历史记录列表')
+        setHistory([])
+      } else {
+        // 用户已登录但获取失败，显示错误提示
+        Taro.showToast({
+          title: error.message || '获取浏览历史失败，请检查网络连接',
+          icon: 'none'
+        })
+      }
     } finally {
       setLoading(false)
     }
@@ -159,7 +182,7 @@ export default function HistoryPage () {
               <View key={item.id} className='history-item'>
                 <Image 
                   className='item-image' 
-                  src={hotel.image || 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20exterior%20default%20placeholder&image_size=square'} 
+                  src={hotel.image && !hotel.image.includes('example.com') ? hotel.image : 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20exterior%20default%20placeholder&image_size=square'} 
                 />
                 <View className='item-info'>
                   <View className='item-header'>

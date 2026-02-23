@@ -1,0 +1,201 @@
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hotel Search Results - Blue &amp; White Theme</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#0066FF",
+                        "brand-blue": "#0066FF",
+                        "brand-red": "#FF3B30",
+                        "background-light": "#F5F7FA",
+                    },
+                    fontFamily: {
+                        sans: ["-apple-system", "BlinkMacSystemFont", "SF Pro Text", "Helvetica Neue", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .hide-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .hide-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light text-slate-900 font-sans">
+<header class="sticky top-0 z-50 bg-brand-blue text-white shadow-lg">
+<div class="px-4 pt-4 pb-3">
+<div class="flex items-center gap-3 bg-white/15 p-3 rounded-xl border border-white/20 backdrop-blur-sm">
+<div class="flex-1 border-r border-white/20">
+<label class="block text-[10px] opacity-80 uppercase font-bold tracking-wider">City</label>
+<div class="flex items-center gap-1">
+<input class="bg-transparent border-none p-0 focus:ring-0 text-sm font-bold w-full placeholder-white/70" type="text" value="Beijing"/>
+</div>
+</div>
+<div class="flex-1">
+<label class="block text-[10px] opacity-80 uppercase font-bold tracking-wider">Dates</label>
+<div class="flex items-center gap-1">
+<input class="bg-transparent border-none p-0 focus:ring-0 text-sm font-bold w-full placeholder-white/70" type="text" value="Feb 14 - Feb 15"/>
+</div>
+</div>
+<button class="p-1 flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">tune</span>
+</button>
+</div>
+<div class="mt-3 relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full bg-white text-slate-800 rounded-full py-2.5 pl-10 pr-4 text-sm border-none focus:ring-2 focus:ring-white/50 shadow-inner" placeholder="Search hotel name or keywords" type="text"/>
+</div>
+</div>
+<div class="bg-white border-b border-slate-100">
+<div class="flex overflow-x-auto hide-scrollbar gap-2 px-4 py-3">
+<button class="whitespace-nowrap flex items-center gap-1.5 px-4 py-1.5 bg-blue-50 text-brand-blue rounded-full text-xs font-semibold border border-blue-100">
+<span class="material-symbols-outlined text-sm">near_me</span>Near Me
+                </button>
+<button class="whitespace-nowrap px-4 py-1.5 bg-slate-50 text-slate-600 rounded-full text-xs font-medium border border-slate-100">Top Rated</button>
+<button class="whitespace-nowrap px-4 py-1.5 bg-slate-50 text-slate-600 rounded-full text-xs font-medium border border-slate-100">Free Cancellation</button>
+<button class="whitespace-nowrap px-4 py-1.5 bg-slate-50 text-slate-600 rounded-full text-xs font-medium border border-slate-100">Breakfast Included</button>
+<button class="whitespace-nowrap px-4 py-1.5 bg-slate-50 text-slate-600 rounded-full text-xs font-medium border border-slate-100">Luxury</button>
+<button class="whitespace-nowrap px-4 py-1.5 bg-slate-50 text-slate-600 rounded-full text-xs font-medium border border-slate-100">Pet Friendly</button>
+</div>
+</div>
+</header>
+<main class="p-4 space-y-4 pb-32">
+<div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+<div class="relative h-52">
+<img alt="Hotel Image" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAxBNEvqaRAx2Nkdva15INlqL0MTxVkIRGuIGBHdTc7KEGveE96dTN-roXn7mqmLlSGq1biVfF_H72bw0Be8MZc0kyk_BguhsquWee9nnL5wyiiuY2xZARZhCI6CQCT4VFQ37WLxeF2phGMX4bT6TpqhhtHoK0S3r34JFjL94HcWW9GOFTkraixBKUKf18AFWpT_zhsCov9JBFNnnbKvir2rSEohYYDY2LOSAGTc7FWFxvRkg0yRvy7QQ4bK9eJm1YVXb_up6JZms"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-brand-blue/90 backdrop-blur-md text-white text-[10px] px-2.5 py-1 rounded-md font-bold uppercase tracking-tight">Top Choice</span>
+<span class="bg-white/90 backdrop-blur-md text-brand-blue text-[10px] px-2.5 py-1 rounded-md font-bold uppercase tracking-tight shadow-sm">Free Cancellation</span>
+</div>
+<button class="absolute top-4 right-4 w-9 h-9 flex items-center justify-center bg-black/20 backdrop-blur-md rounded-full text-white">
+<span class="material-symbols-outlined text-xl">favorite</span>
+</button>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start">
+<div class="flex-1">
+<h2 class="text-lg font-bold text-slate-900 leading-snug">Beijing Wangfujing Hilton</h2>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-slate-400 text-sm">location_on</span>
+<p class="text-[11px] text-slate-500 font-medium">8 Wangfujing East Street, Dongcheng District</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<div class="bg-brand-blue text-white font-bold rounded-lg px-2 py-1 text-sm">4.8</div>
+<span class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Excellent</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mt-4">
+<span class="px-2.5 py-1 bg-blue-50 text-brand-blue text-[10px] font-bold rounded-md">FREE WIFI</span>
+<span class="px-2.5 py-1 bg-blue-50 text-brand-blue text-[10px] font-bold rounded-md">PARKING</span>
+<span class="px-2.5 py-1 bg-blue-50 text-brand-blue text-[10px] font-bold rounded-md">GYM</span>
+</div>
+<div class="mt-5 pt-4 border-t border-slate-50 flex items-center justify-between">
+<div class="flex flex-col">
+<div class="flex items-baseline gap-0.5">
+<span class="text-brand-red text-sm font-bold">¥</span>
+<span class="text-brand-red text-2xl font-extrabold tracking-tight">1,280</span>
+</div>
+<span class="text-slate-400 text-[10px] font-medium tracking-wide">PER NIGHT</span>
+</div>
+<button class="bg-brand-blue text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md shadow-brand-blue/20 active:scale-[0.98] transition-all">
+                        Book Now
+                    </button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+<div class="relative h-52">
+<img alt="Hotel Image" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqxnwEww-Uo-3S4OQjKNGVqena2qOKWrkep8jOmMfFwteSxuYGYh7-7qWGGnl0ZtiEVsT-41vTfl7Ymbt_9_NBeeKMPVXDA9VZ0cFxT5Bv7NGQXOKh_DSMxZmAkvtDNvAfBMAZF1A17Ao_8PrCYMst6NRo6U_66S7KZ-jQtt_yowUhpegvBHECDxoBkqTr0SITrKdXj7PtcbvnVOlFGki-BB-IVat4L8SpGiiRCRDVXZmL7guWrEwcEF4pHHypSZzTWccx-_-xVPY"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-brand-blue/90 backdrop-blur-md text-white text-[10px] px-2.5 py-1 rounded-md font-bold uppercase tracking-tight">Popular</span>
+</div>
+<button class="absolute top-4 right-4 w-9 h-9 flex items-center justify-center bg-black/20 backdrop-blur-md rounded-full text-white">
+<span class="material-symbols-outlined text-xl">favorite</span>
+</button>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start">
+<div class="flex-1">
+<h2 class="text-lg font-bold text-slate-900 leading-snug">Beijing China World Hotel</h2>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-slate-400 text-sm">location_on</span>
+<p class="text-[11px] text-slate-500 font-medium">1 Jianguomenwai Avenue, Chaoyang District</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<div class="bg-brand-blue text-white font-bold rounded-lg px-2 py-1 text-sm">4.9</div>
+<span class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Exceptional</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mt-4">
+<span class="px-2.5 py-1 bg-blue-50 text-brand-blue text-[10px] font-bold rounded-md">POOL</span>
+<span class="px-2.5 py-1 bg-blue-50 text-brand-blue text-[10px] font-bold rounded-md">SPA</span>
+<span class="px-2.5 py-1 bg-blue-50 text-brand-blue text-[10px] font-bold rounded-md">BUSINESS</span>
+</div>
+<div class="mt-5 pt-4 border-t border-slate-50 flex items-center justify-between">
+<div class="flex flex-col">
+<div class="flex items-baseline gap-0.5">
+<span class="text-brand-red text-sm font-bold">¥</span>
+<span class="text-brand-red text-2xl font-extrabold tracking-tight">1,680</span>
+</div>
+<span class="text-slate-400 text-[10px] font-medium tracking-wide">PER NIGHT</span>
+</div>
+<button class="bg-brand-blue text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md shadow-brand-blue/20 active:scale-[0.98] transition-all">
+                        Book Now
+                    </button>
+</div>
+</div>
+</div>
+<div class="text-center py-8">
+<p class="text-slate-400 text-xs font-medium">Showing all results</p>
+</div>
+</main>
+<button class="fixed bottom-32 right-6 bg-brand-blue shadow-2xl w-14 h-14 rounded-full flex items-center justify-center text-white z-40 active:scale-90 transition-transform shadow-brand-blue/30">
+<span class="material-symbols-outlined text-2xl">map</span>
+</button>
+<nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-100 px-10 pt-3 pb-8 flex justify-between items-center z-50">
+<div class="flex flex-col items-center gap-1 active-nav">
+<span class="material-symbols-outlined text-brand-blue">home</span>
+<span class="text-[10px] text-brand-blue font-bold">首页</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-slate-400">receipt_long</span>
+<span class="text-[10px] text-slate-400 font-bold">订单</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-slate-400">person</span>
+<span class="text-[10px] text-slate-400 font-bold">我的</span>
+</div>
+</nav>
+
+</body></html>

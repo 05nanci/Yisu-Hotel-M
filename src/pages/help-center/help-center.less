@@ -1,0 +1,197 @@
+/* 帮助中心页面样式 */
+
+.help-center-container {
+  flex: 1;
+  background-color: #f5f5f5;
+}
+
+.help-center-scroll {
+  flex: 1;
+}
+
+/* 帮助中心标题 */
+.help-center-header {
+  padding: 20px;
+  background-color: #fff;
+  margin-bottom: 10px;
+}
+
+.help-center-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.help-center-subtitle {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 常见问题列表 */
+.faq-list {
+  margin-bottom: 20px;
+}
+
+.faq-category {
+  background-color: #fff;
+  margin-bottom: 10px;
+}
+
+.faq-category-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  padding: 15px 20px 10px;
+  border-left: 4px solid #1890ff;
+  margin-left: 20px;
+}
+
+.faq-questions {
+  padding: 0 20px 15px;
+}
+
+.faq-item {
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* 问题部分 */
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.faq-question-text {
+  flex: 1;
+  font-size: 15px;
+  color: #333;
+  line-height: 1.4;
+  margin-right: 15px;
+}
+
+.faq-arrow {
+  font-size: 12px;
+  color: #999;
+  transition: transform 0.3s ease;
+  margin-top: 2px;
+}
+
+.faq-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+/* 答案部分 */
+.faq-answer {
+  padding: 10px 0 0;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.faq-answer-text {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 联系客服入口 */
+.contact-service-section {
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.contact-service-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.contact-service-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.contact-service-button {
+  background-color: #1890ff;
+  color: #fff;
+  padding: 12px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.contact-service-button:hover {
+  background-color: #40a9ff;
+}
+
+.contact-service-button-text {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+  .help-center-header {
+    padding: 15px;
+  }
+
+  .help-center-title {
+    font-size: 18px;
+  }
+
+  .faq-category-title {
+    font-size: 15px;
+    padding: 12px 15px 8px;
+    margin-left: 15px;
+  }
+
+  .faq-questions {
+    padding: 0 15px 12px;
+  }
+
+  .faq-question-text {
+    font-size: 14px;
+  }
+
+  .faq-answer-text {
+    font-size: 13px;
+  }
+
+  .contact-service-section {
+    padding: 15px;
+  }
+
+  .contact-service-title {
+    font-size: 15px;
+  }
+
+  .contact-service-button {
+    padding: 10px 0;
+  }
+}

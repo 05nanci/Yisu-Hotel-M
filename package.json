@@ -37,6 +37,7 @@
   ],
   "author": "",
   "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
     "@babel/runtime": "^7.24.4",
     "@nutui/nutui-react-taro": "^3.0.19-cpp.25",
     "@tarojs/components": "4.1.11",

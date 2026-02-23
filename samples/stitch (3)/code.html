@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Premium Hotel Details Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --primary-dark: #0F172A;
+            --accent-gold: #C5A059;
+            --soft-bg: #F8FAFC;
+            --text-secondary: #64748B;
+            --ios-blur: rgba(255, 255, 255, 0.8);
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--soft-bg);
+            color: var(--primary-dark);
+        }
+        .glass-header {
+            background: var(--ios-blur);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="max-w-[430px] mx-auto min-h-screen relative shadow-2xl bg-white">
+<header class="fixed top-0 left-0 right-0 z-50 max-w-[430px] mx-auto px-4 py-3 glass-header border-b border-slate-100 flex items-center justify-between">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/50 border border-slate-200">
+<span class="material-symbols-outlined text-[var(--primary-dark)]">arrow_back_ios_new</span>
+</button>
+<div class="flex-1 px-4 opacity-0 transition-opacity duration-300">
+<h1 class="text-sm font-bold truncate">Grand Mirage Luxury Resort</h1>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/50 border border-slate-200">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/50 border border-slate-200">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+</header>
+<main class="pb-24">
+<section class="relative px-4 pt-20">
+<div class="relative h-[400px] w-full rounded-[32px] overflow-hidden shadow-lg">
+<img alt="Hotel Hero" class="w-full h-full object-fill" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCb8cvUnmKaS23WLesHoVkADchFXsM1pQPxRbjLqwTY5DakJWE6_7zDyjg6P3WfL7-Xy96x6EZR82qRjO7NCTdb9qE_7waoGqDGYHih45k3QX868S5-BhZDiID1PWCUUFPD1nwOnKnnLilZ0hOFmaX79qhSyIay9Yj1QEnky6KPrhFJYeMUu1NLheWZbobdBjMeJ9kX6lX44XwmaWzqNHIAajDRbT-znV-KH-_ll7PjUSTh6m9rZgPXGt57ZrEcYcSNWJS06ilHMPJN"/>
+<div class="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+<div class="bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+<span class="text-white text-xs font-medium tracking-wider">1 / 12 PHOTOS</span>
+</div>
+</div>
+</div>
+</section>
+<section class="px-6 pt-6">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-1 items-center">
+<span class="material-symbols-outlined text-[var(--accent-gold)] text-sm">star</span>
+<span class="material-symbols-outlined text-[var(--accent-gold)] text-sm">star</span>
+<span class="material-symbols-outlined text-[var(--accent-gold)] text-sm">star</span>
+<span class="material-symbols-outlined text-[var(--accent-gold)] text-sm">star</span>
+<span class="material-symbols-outlined text-[var(--accent-gold)] text-sm">star</span>
+<span class="text-xs font-semibold text-[var(--accent-gold)] ml-1 tracking-widest uppercase">Luxury Hotel</span>
+</div>
+<div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full">
+<span class="text-sm font-bold">4.9</span>
+<div class="w-[1px] h-3 bg-slate-300"></div>
+<span class="text-[10px] text-[var(--text-secondary)] font-bold uppercase">Exceptional</span>
+</div>
+</div>
+<h1 class="text-2xl font-bold tracking-tight text-[var(--primary-dark)] mb-1 leading-tight">Grand Mirage Luxury Resort &amp; Spa</h1>
+<p class="text-sm text-[var(--text-secondary)] mb-6">Downtown Financial District, Singapore</p>
+<div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between mb-8">
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-[var(--text-secondary)] tracking-wider">Check-in</span>
+<span class="text-sm font-bold">Oct 12, 2023</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
+<span class="text-[9px] font-bold text-[var(--primary-dark)]">3 NIGHTS</span>
+</div>
+<div class="w-8 h-[1px] bg-slate-200 mt-1"></div>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-[var(--text-secondary)] tracking-wider">Check-out</span>
+<span class="text-sm font-bold">Oct 15, 2023</span>
+</div>
+</div>
+<button class="material-symbols-outlined text-slate-400">edit_calendar</button>
+</div>
+<div class="relative h-32 w-full rounded-2xl overflow-hidden mb-8 border border-slate-100">
+<img class="w-full h-full object-cover grayscale opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXohgeTTiMfzg4tmwljValUtS4SHkjr1aomrhSaQ1SVX2rabZOUOMohKjkayXXlwrsSjk0LyiTmTvYRzIe0hrYlP4FxgwfpCS9hBksUueITHNad5Me9WzOlxvjiuw3Ipd2sQZgIccohd2ccJ4Gz9IDgxm3MRJMoDvD5UvxLwgTpWH8lq0MJLHSOMcZSaCoFVYdLPMwc20GV0E6YW-A8YEWOpfG6xhgNlfDbkPjqcft7ob_5SOPDa2FXKyULSC8_V_gCNrlBHg8BQlL"/>
+<div class="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-transparent flex flex-col justify-center px-6">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-slate-900 text-lg">location_on</span>
+<span class="text-xs font-bold uppercase tracking-widest text-slate-900">Location</span>
+</div>
+<p class="text-[11px] leading-tight text-slate-600 max-w-[200px]">12 Marina Boulevard, Level 43 Tower 3, Singapore 018982</p>
+</div>
+</div>
+<div class="mb-8">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-bold text-sm tracking-wide uppercase">Hotel Amenities</h3>
+<span class="text-xs font-semibold text-[var(--accent-gold)]">View All</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+<span class="material-symbols-outlined text-slate-700">pool</span>
+<span class="text-xs font-medium">Infinity Pool</span>
+</div>
+<div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+<span class="material-symbols-outlined text-slate-700">spa</span>
+<span class="text-xs font-medium">Wellness Spa</span>
+</div>
+<div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+<span class="material-symbols-outlined text-slate-700">fitness_center</span>
+<span class="text-xs font-medium">24/7 Fitness</span>
+</div>
+<div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+<span class="material-symbols-outlined text-slate-700">restaurant</span>
+<span class="text-xs font-medium">Fine Dining</span>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<h3 class="font-bold text-sm tracking-wide uppercase mb-4">Available Rooms</h3>
+<div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100">
+<div class="flex h-40">
+<div class="w-2/5 relative">
+<img class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZPTLPekIf3TEIilNTBV6-LJKQ8QfQosTfF5pr80IxWsyPdEVKvSbBX58ylW-xyMLzPDsKiSNKO-oe7GpPaYsUsS5a9_Qmbc_RdNyVRMUIqKdfXGQv995_cKu3_2C5QaPNhXvWajTcTqyUkyar7EbEeTfQGAQEo8sMmgdycloll0tgC5v3vMxCn2ZtFkpJGpwcRHy4Bpzh4N7aScZP8xRH9a5V0fJeY8ONY9EJ1mxqH-SIxnL_Esvza9QHJVV79A9QGu4-7nmWAoBu"/>
+<div class="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-0.5 rounded-lg border border-white/50">
+<span class="text-[9px] font-bold text-[var(--primary-dark)]">PREMIUM</span>
+</div>
+</div>
+<div class="flex-1 p-4 flex flex-col justify-between">
+<div>
+<h4 class="font-bold text-sm mb-1 leading-snug">Deluxe King Room with City View</h4>
+<div class="flex items-center gap-2 text-[10px] text-slate-500 font-medium">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">king_bed</span> 1 King</span>
+<span>•</span>
+<span>42 m²</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-lg font-extrabold text-[var(--primary-dark)]">$340</span>
+<span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">per night / incl. taxes</span>
+</div>
+<button class="bg-[var(--accent-gold)] text-white px-5 py-2 rounded-xl text-xs font-bold shadow-md shadow-amber-200/50">BOOK</button>
+</div>
+</div>
+</div>
+<details class="group border-t border-slate-100">
+<summary class="list-none px-4 py-2.5 flex items-center justify-between cursor-pointer">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Policy &amp; Details</span>
+<span class="material-symbols-outlined text-slate-300 group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="px-4 pb-4 space-y-3">
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<span class="text-[10px] font-bold text-slate-500 uppercase">Cancellation</span>
+<p class="text-[11px] text-slate-600">Free cancellation before Oct 10, 2023</p>
+</div>
+<div class="space-y-1">
+<span class="text-[10px] font-bold text-slate-500 uppercase">Breakfast</span>
+<p class="text-[11px] text-slate-600">Complimentary buffet included</p>
+</div>
+</div>
+</div>
+</details>
+</div>
+<div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100">
+<div class="flex h-40">
+<div class="w-2/5 relative">
+<img class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNJ35cqE5O3scqVJqaThEqgBhPCZucJljpb8m1sdAMafGPfjyG70NuVwzLNo0iMl3sFtTFKuW-u7MFcjy4_c9sRlcBgcvRYFBiFn-52sPgB2yWsVZYXEThbqk6vBTwH91vZFjyOWIBHyEAzsy6m0xQeS0sxFKCngspX9idgOm5E_OTc9RxjSk-RxIl83v4ng1yCt4xxEm8kMnYKDVopAlbDCg_xwePhe8r5C1f8j2Cfw-IlmTlVkdIIgWfQP9Q8rDvg-xyhf8US1d4"/>
+</div>
+<div class="flex-1 p-4 flex flex-col justify-between">
+<div>
+<h4 class="font-bold text-sm mb-1 leading-snug">Executive Suite Marina Bay View</h4>
+<div class="flex items-center gap-2 text-[10px] text-slate-500 font-medium">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">king_bed</span> 1 King</span>
+<span>•</span>
+<span>65 m²</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-lg font-extrabold text-[var(--primary-dark)]">$580</span>
+<span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">per night / incl. taxes</span>
+</div>
+<button class="bg-[var(--accent-gold)] text-white px-5 py-2 rounded-xl text-xs font-bold shadow-md shadow-amber-200/50">BOOK</button>
+</div>
+</div>
+</div>
+<details class="group border-t border-slate-100">
+<summary class="list-none px-4 py-2.5 flex items-center justify-between cursor-pointer">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Policy &amp; Details</span>
+<span class="material-symbols-outlined text-slate-300 group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="px-4 pb-4 space-y-3">
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<span class="text-[10px] font-bold text-slate-500 uppercase">Cancellation</span>
+<p class="text-[11px] text-slate-600">Non-refundable rate</p>
+</div>
+<div class="space-y-1">
+<span class="text-[10px] font-bold text-slate-500 uppercase">Lounge</span>
+<p class="text-[11px] text-slate-600">Executive lounge access</p>
+</div>
+</div>
+</div>
+</details>
+</div>
+</div>
+</section>
+</main>
+<div class="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-white/95 backdrop-blur-md border-t border-slate-100 px-8 py-4 flex justify-between items-center z-50">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">From</span>
+<div class="flex items-baseline gap-1">
+<span class="text-xl font-extrabold text-[var(--primary-dark)]">$340</span>
+<span class="text-xs font-medium text-slate-500">/ night</span>
+</div>
+</div>
+<button class="bg-[var(--primary-dark)] text-white px-8 py-3 rounded-2xl font-bold text-sm tracking-wide shadow-xl">Select Room</button>
+</div>
+
+</body></html>

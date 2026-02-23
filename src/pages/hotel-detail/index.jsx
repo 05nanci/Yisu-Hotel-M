@@ -1,64 +1,68 @@
-// 注意：导入 React 原生的 useState/useEffect，而非 Taro 的
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Taro from '@tarojs/taro';
 import { View, Text, Image, ScrollView, Swiper, SwiperItem } from '@tarojs/components';
-import { hotelApi } from '../../services/api';
+import AMapLoader from '@amap/amap-jsapi-loader';
+import { hotelApi, favoriteApi } from '../../services/api';
+import DateSelector from '../../components/DateSelector';
 import './index.less';
 
-// 模拟数据（包含id=1的酒店，匹配你当前URL参数）
-const mockHotelData = {
-  "1": {
-    bannerList: ['https://img95.699pic.com/photo/50120/2224.jpg_wh860.jpg'],
-    hotelInfo: {
-      name: '北京王府井希尔顿酒店',
-      tag: '优享会',
-      openYear: '2019年开业',
-      features: ['免费WiFi', '停车场'],
-      score: 4.8,
-      commentCount: 128,
-      scoreDesc: '环境干净舒适',
-      distance: '距地铁站0.5km',
-      address: '北京市东城区王府井东街8号'
-    },
-    discountTags: ['订房优惠', '首住特惠'],
-    dateRange: '2月8日 - 2月9日',
-    stayNight: '1晚',
-    roomGuest: '1间 1人',
-    roomList: [
-      {
-        id: 'room1',
-        name: '舒适大床房',
-        desc: '1张1.8米床',
-        note: '入住时间14:00后 | 退房时间12:00前',
-        service: '免费WiFi | 免费停车 | 空调 | 电视',
-        tags: ['免费取消', '含早餐'],
-        originalPrice: 289,
-        currentPrice: 189,
-        img: 'https://img95.699pic.com/photo/50120/2225.jpg_wh300.jpg'
-      }
-    ]
-  }
-};
+const metaEnv = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {};
+const AMAP_KEY = metaEnv.VITE_AMAP_KEY || metaEnv.TARO_APP_AMAP_KEY || process.env.VITE_AMAP_KEY || process.env.TARO_APP_AMAP_KEY || '';
+const AMAP_SECURITY_CODE = metaEnv.VITE_AMAP_SECURITY_CODE || metaEnv.TARO_APP_AMAP_SECURITY_KEY || process.env.VITE_AMAP_SECURITY_CODE || process.env.TARO_APP_AMAP_SECURITY_KEY || '';
+
+if (typeof window !== 'undefined' && AMAP_SECURITY_CODE) {
+  window._AMapSecurityConfig = {
+    securityJsCode: AMAP_SECURITY_CODE
+  };
+}
 
 export default function HotelDetail() {
-  // 修复：使用 React 原生 useState
-  const [hotelData, setHotelData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedFilters, setSelectedFilters] = useState([]);
-  const [showFilterPanel, setShowFilterPanel] = useState(false);
-  const [filterOptions, setFilterOptions] = useState({
-    roomTypes: [],
-    facilities: [],
-    services: []
-  });
+  const [hotelId, setHotelId] = useState('');
+  const [hotelInfo, setHotelInfo] = useState(null);
+  const [rooms, setRooms] = useState([]);
+  const [collected, setCollected] = useState(false);
+  const [checkInDate, setCheckInDate] = useState('');
+  const [checkOutDate, setCheckOutDate] = useState('');
+  const [showDateSelector, setShowDateSelector] = useState(false);
+  const [expandedRooms, setExpandedRooms] = useState({});
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const mapContainerId = 'hotel-detail-map-container';
+  const mapWrapperRef = useRef(null);
+  const mapDomRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+  const markerRef = useRef(null);
 
   useEffect(() => {
-    const fetchHotelDetail = async () => {
+    const initPage = async () => {
       try {
         setLoading(true);
-        // 从路由参数获取酒店ID
-        const { id } = Taro.getCurrentInstance().router?.params || {};
-        if (!id) {
+        const { id, hotelId } = Taro.getCurrentInstance().router?.params || {};
+        const hotel_id = id || hotelId;
+        setHotelId(hotel_id);
+
+        const {
+          check_in,
+          check_out,
+          checkIn,
+          checkOut,
+          check_in_date,
+          check_out_date,
+          start_date,
+          end_date
+        } = Taro.getCurrentInstance().router?.params || {};
+        const initialCheckIn = check_in || checkIn || check_in_date || start_date;
+        const initialCheckOut = check_out || checkOut || check_out_date || end_date;
+        const today = new Date();
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+        const formattedToday = formatDate(today);
+        const formattedTomorrow = formatDate(tomorrow);
+        setCheckInDate(initialCheckIn || formattedToday);
+        setCheckOutDate(initialCheckOut || formattedTomorrow);
+
+        if (!hotel_id) {
           Taro.showToast({
             title: '酒店ID不能为空',
             icon: 'none'
@@ -69,393 +73,624 @@ export default function HotelDetail() {
           return;
         }
 
-        // 调用API获取酒店详情
-        try {
-          const response = await hotelApi.getHotelDetail(id);
-          if (response.code === 0 && response.data) {
-            setHotelData(response.data);
-          } else {
-            // 使用模拟数据作为兜底
-            const data = mockHotelData[id] || mockHotelData["1"];
-            setHotelData(data);
-          }
-        } catch (error) {
-          // API调用失败时使用模拟数据
-          console.warn('API调用失败，使用模拟数据:', error);
-          const data = mockHotelData[id] || mockHotelData["1"];
-          setHotelData(data);
-        }
+        await fetchHotelDetail(hotel_id);
+        await checkFavoriteStatus(hotel_id);
       } catch (error) {
-        console.error('获取酒店详情失败:', error);
+        console.error('初始化页面失败:', error);
         Taro.showToast({
-          title: error.message || '获取酒店详情失败，请检查网络连接',
-          icon: 'none',
-          duration: 2000
+          title: '加载失败，请重试',
+          icon: 'none'
         });
-        // 使用模拟数据作为最终兜底
-        setHotelData(mockHotelData["1"]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchHotelDetail();
+    initPage();
   }, []);
 
-  // 处理筛选标签点击
-  const handleFilterTagClick = (tag) => {
-    setSelectedFilters(prev => {
-      if (prev.includes(tag)) {
-        return prev.filter(item => item !== tag);
-      } else {
-        return [...prev, tag];
+  useEffect(() => {
+    if (!showMapModal) {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.destroy();
+        mapInstanceRef.current = null;
       }
-    });
-  };
+      markerRef.current = null;
+      return;
+    }
 
-  // 处理筛选按钮点击
-  const handleFilterClick = () => {
-    console.log('筛选按钮点击');
-    // 切换筛选面板的显示状态
-    setShowFilterPanel(!showFilterPanel);
-  };
-
-  // 处理筛选选项点击
-  const handleFilterOptionClick = (category, option) => {
-    setFilterOptions(prev => {
-      const currentOptions = prev[category];
-      if (currentOptions.includes(option)) {
-        // 取消选择
-        return {
-          ...prev,
-          [category]: currentOptions.filter(item => item !== option)
-        };
-      } else {
-        // 选择
-        return {
-          ...prev,
-          [category]: [...currentOptions, option]
-        };
+    const initMap = async () => {
+      if (Taro.getEnv() !== Taro.ENV_TYPE.WEB) {
+        return;
       }
+      const ensureMapContainer = () => {
+        if (!mapWrapperRef.current || typeof document === 'undefined') {
+          return null;
+        }
+        if (mapDomRef.current && mapDomRef.current.parentNode === mapWrapperRef.current) {
+          return mapDomRef.current;
+        }
+        const existing = document.getElementById(mapContainerId);
+        if (existing && existing.parentNode === mapWrapperRef.current) {
+          mapDomRef.current = existing;
+          return existing;
+        }
+        const div = document.createElement('div');
+        div.id = mapContainerId;
+        div.style.width = '100%';
+        div.style.height = '100%';
+        mapWrapperRef.current.innerHTML = '';
+        mapWrapperRef.current.appendChild(div);
+        mapDomRef.current = div;
+        return div;
+      };
+      const container = ensureMapContainer();
+      if (!container || !AMAP_KEY) {
+        return;
+      }
+      try {
+        const AMap = await AMapLoader.load({
+          key: AMAP_KEY,
+          version: '2.0',
+          plugins: ['AMap.Geocoder', 'AMap.Marker']
+        });
+        const location = hotelInfo?.location_info?.location || '';
+        const parsed = parseLocation(location);
+        let center = parsed || [116.397428, 39.90923];
+
+        const map = new AMap.Map(container, {
+          zoom: 15,
+          center
+        });
+
+        mapInstanceRef.current = map;
+        const marker = new AMap.Marker({
+          position: center,
+          map
+        });
+        markerRef.current = marker;
+
+        if (!parsed && hotelInfo?.location_info?.formatted_address) {
+          const geocoder = new AMap.Geocoder();
+          geocoder.getLocation(hotelInfo.location_info.formatted_address, (status, result) => {
+            if (status === 'complete' && result.geocodes && result.geocodes.length) {
+              const pos = result.geocodes[0].location;
+              map.setCenter(pos);
+              marker.setPosition(pos);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('地图加载失败:', error);
+      }
+    };
+
+    Taro.nextTick(() => {
+      initMap();
+    });
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.destroy();
+        mapInstanceRef.current = null;
+      }
+      markerRef.current = null;
+    };
+  }, [showMapModal, hotelInfo]);
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const parseLocation = (location) => {
+    if (!location || !location.includes(',')) return null;
+    const [lng, lat] = location.split(',').map(Number);
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null;
+    return [lng, lat];
+  };
+
+  const calculateNights = (start, end) => {
+    if (!start || !end) return 0;
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const diff = endDate.getTime() - startDate.getTime();
+    const nights = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    return nights > 0 ? nights : 0;
+  };
+
+  const checkFavoriteStatus = async (hotelId) => {
+    try {
+      const token = Taro.getStorageSync('token');
+      if (!token) {
+        return;
+      }
+      const response = await favoriteApi.getFavorites();
+      if (response.code === 0 && response.data) {
+        const favoritesData = response.data.favorites || response.data.list || response.data || [];
+        const isCollected = favoritesData.some(item => {
+          const itemHotelId = item.hotel_id || item.id || item.hotel?.id || item.hotel?.hotel_id;
+          return itemHotelId === hotelId;
+        });
+        setCollected(isCollected);
+      }
+    } catch (error) {
+      console.error('检查收藏状态失败:', error);
+    }
+  };
+
+  const fetchHotelDetail = async (id) => {
+    try {
+      const response = await hotelApi.getHotelDetail(id);
+      if (response.code === 0 && response.data) {
+        const hotelData = response.data;
+        const normalizedHotelInfo = {
+          id: hotelData.hotel_id || hotelData.id,
+          hotel_name_cn: hotelData.hotel_name_cn || hotelData.name || '',
+          hotel_name_en: hotelData.hotel_name_en || '',
+          star_rating: hotelData.star_rating || 0,
+          rating: hotelData.rating || 0,
+          review_count: hotelData.review_count || 0,
+          description: hotelData.description || '',
+          location_info: hotelData.location_info || {},
+          nearby_info: hotelData.nearby_info || '',
+          main_image_url: Array.isArray(hotelData.main_image_url)
+            ? hotelData.main_image_url
+            : hotelData.main_image_url ? [hotelData.main_image_url] : [],
+          services: hotelData.services || [],
+          facilities: hotelData.facilities || [],
+          policies: hotelData.policies || hotelData.policy || {},
+          tags: hotelData.tags || []
+        };
+        const roomList = hotelData.room_types || [];
+        const formattedRooms = roomList.map(room => ({
+          id: room.id || room.room_id || room.room_type_id,
+          name: room.name || room.room_name || room.room_type_name || '',
+          bed_type: room.bed_type || '',
+          area: room.area || '',
+          description: room.description || '',
+          room_image_url: room.room_image_url || '',
+          tags: Array.isArray(room.tags) ? room.tags : [],
+          facilities: Array.isArray(room.facilities) ? room.facilities : [],
+          services: Array.isArray(room.services) ? room.services : [],
+          policies: room.policies || {},
+          prices: Array.isArray(room.prices) ? room.prices : []
+        }));
+        setHotelInfo(normalizedHotelInfo);
+        setRooms(formattedRooms);
+      } else {
+        Taro.showToast({
+          title: response.msg || '获取酒店详情失败',
+          icon: 'none'
+        });
+        setHotelInfo(null);
+        setRooms([]);
+      }
+    } catch (error) {
+      console.error('获取酒店详情失败:', error);
+      Taro.showToast({
+        title: '获取酒店详情失败，请重试',
+        icon: 'none'
+      });
+      setHotelInfo(null);
+      setRooms([]);
+    }
+  };
+
+  const handleBackClick = () => {
+    try {
+      Taro.navigateBack({
+        delta: 1,
+        success: () => {
+        },
+        fail: (error) => {
+          console.error('返回失败:', error);
+          Taro.navigateTo({
+            url: '/pages/index/index'
+          });
+        }
+      });
+    } catch (error) {
+      console.error('返回操作异常:', error);
+    }
+  };
+
+  const handleCollectClick = async () => {
+    try {
+      const token = Taro.getStorageSync('token');
+      if (!token) {
+        Taro.showToast({
+          title: '请先登录',
+          icon: 'none'
+        });
+        Taro.navigateTo({
+          url: '/pages/login/login'
+        });
+        return;
+      }
+
+      const response = await favoriteApi[collected ? 'removeFavorite' : 'addFavorite'](hotelId);
+      if (response.code === 0) {
+        setCollected(!collected);
+        Taro.showToast({
+          title: collected ? '取消收藏成功' : '收藏成功',
+          icon: 'success'
+        });
+        // 触发收藏状态变化事件，通知其他页面更新收藏状态
+        Taro.eventCenter.trigger('favoritesChanged', { hotelId, collected: !collected });
+      } else {
+        Taro.showToast({
+          title: response.msg || (collected ? '取消收藏失败' : '收藏失败'),
+          icon: 'none'
+        });
+      }
+    } catch (error) {
+      console.error('收藏操作失败:', error);
+      Taro.showToast({
+        title: '操作失败，请重试',
+        icon: 'none'
+      });
+    }
+  };
+
+  const handleBookClick = (room) => {
+    const averagePrice = getAveragePrice(room);
+    const totalPrice = getTotalPrice(room);
+    const roomName = room.name || room.room_name || room.room_type_name || '房型';
+    const hotelName = hotelInfo?.hotel_name_cn || hotelInfo?.name || '';
+    Taro.setStorageSync('bookingConfirmPayload', {
+      hotelId,
+      roomId: room.id,
+      roomName,
+      hotelName,
+      price: averagePrice,
+      totalPrice,
+      check_in_date: checkInDate,
+      check_out_date: checkOutDate
+    });
+    Taro.navigateTo({
+      url: `/pages/booking-confirm/index`
     });
   };
 
-  // 处理重置筛选
-  const handleResetFilter = () => {
-    setFilterOptions({
-      roomTypes: [],
-      facilities: [],
-      services: []
-    });
+  const handleDateConfirm = (checkIn, checkOut) => {
+    setCheckInDate(checkIn);
+    setCheckOutDate(checkOut);
+    setShowDateSelector(false);
   };
 
-  // 处理确定筛选
-  const handleConfirmFilter = () => {
-    console.log('确定筛选', filterOptions);
-    // 这里可以根据筛选选项过滤房间列表
-    // 暂时只关闭筛选面板
-    setShowFilterPanel(false);
-    // 显示筛选成功提示
-    Taro.showToast({
-      title: '筛选已应用',
-      icon: 'none'
-    });
+  const toggleRoomExpand = (roomId) => {
+    setExpandedRooms(prev => ({
+      ...prev,
+      [roomId]: !prev[roomId]
+    }));
   };
 
-  // 加载中状态
-  if (loading) {
-    return (
-      <View className="loading-container">
-        <Text className="loading-text">加载中...</Text>
-      </View>
+  const getAveragePrice = (room) => {
+    const priceList = Array.isArray(room.prices) ? room.prices : [];
+    const priceMap = new Map(
+      priceList.map(item => [item.date, Number(item.price)])
     );
-  }
+    const start = new Date(checkInDate);
+    const end = new Date(checkOutDate);
+    const rangePrices = [];
+    if (checkInDate && checkOutDate && end > start) {
+      const cursor = new Date(start);
+      while (cursor < end) {
+        const key = formatDate(cursor);
+        if (priceMap.has(key)) {
+          const value = priceMap.get(key);
+          if (Number.isFinite(value)) {
+            rangePrices.push(value);
+          }
+        }
+        cursor.setDate(cursor.getDate() + 1);
+      }
+    }
+    const pricesToUse = rangePrices.length ? rangePrices : priceList.map(p => Number(p.price)).filter(v => Number.isFinite(v));
+    if (!pricesToUse.length) return 0;
+    const sum = pricesToUse.reduce((acc, value) => acc + value, 0);
+    return Math.round(sum / pricesToUse.length);
+  };
 
-  // 无数据兜底
-  if (!hotelData) {
-    return (
-      <View className="loading-container">
-        <Text className="loading-text">暂无酒店信息</Text>
-      </View>
+  const getTotalPrice = (room) => {
+    const priceList = Array.isArray(room.prices) ? room.prices : [];
+    const priceMap = new Map(
+      priceList.map(item => [item.date, Number(item.price)])
     );
-  }
+    const start = new Date(checkInDate);
+    const end = new Date(checkOutDate);
+    let total = 0;
+    if (checkInDate && checkOutDate && end > start) {
+      const cursor = new Date(start);
+      while (cursor < end) {
+        const key = formatDate(cursor);
+        if (priceMap.has(key)) {
+          const value = priceMap.get(key);
+          if (Number.isFinite(value)) {
+            total += value;
+          }
+        }
+        cursor.setDate(cursor.getDate() + 1);
+      }
+      if (total > 0) return Math.round(total);
+    }
+    const averagePrice = getAveragePrice(room);
+    const nights = calculateNights(checkInDate, checkOutDate);
+    if (!averagePrice || !nights) return 0;
+    return Math.round(averagePrice * nights);
+  };
 
-  // 主渲染
+  const nightCount = useMemo(() => calculateNights(checkInDate, checkOutDate), [checkInDate, checkOutDate]);
+  const heroImages = useMemo(() => {
+    const list = hotelInfo?.main_image_url;
+    const normalized = Array.isArray(list) ? list.filter(Boolean) : [];
+    if (normalized.length) {
+      return normalized;
+    }
+    return ['https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20hotel%20exterior%20building%20architecture&image_size=landscape_4_3'];
+  }, [hotelInfo]);
+
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [hotelInfo]);
+
   return (
-    <ScrollView className="hotel-detail-page">
-      {/* 返回按钮 */}
-      <View className="back-btn" onClick={() => Taro.navigateBack()}>
+    <View className="hotel-detail-page">
+      <View className="back-btn" style={{ cursor: 'pointer' }} onClick={handleBackClick}>
         <Text className="back-icon">←</Text>
         <Text className="back-text">返回</Text>
       </View>
 
-      {/* 顶部轮播图 */}
-      <Swiper className="banner-swiper">
-        {(hotelData.main_image_url || hotelData.bannerList || []).map((img, idx) => (
-          <SwiperItem key={idx}>
-            <Image className="banner-img" src={img} mode="widthFix" />
-          </SwiperItem>
-        ))}
-      </Swiper>
-
-      {/* 酒店名称+标签 */}
-      <View className="hotel-header">
-        <Text className="hotel-name">{hotelData.name || hotelData.hotelInfo?.name || '酒店名称'}</Text>
-        <Text className="hotel-tag">{hotelData.star_rating ? `${hotelData.star_rating}星级` : hotelData.hotelInfo?.tag || '酒店标签'}</Text>
-      </View>
-
-      {/* 设施图标栏 */}
-      <View className="facilities-row">
-        {hotelData.facilities && hotelData.facilities.slice(0, 4).map((facility, idx) => (
-          <Text key={idx} className="facility-item">
-            <Text className="facility-icon">📋</Text>
-            <Text className="facility-text">{facility}</Text>
-          </Text>
-        ))}
-        {(!hotelData.facilities || hotelData.facilities.length === 0) && (
-          <>
-            <Text className="facility-item">
-              <Text className="facility-icon">📶</Text>
-              <Text className="facility-text">WiFi</Text>
-            </Text>
-            <Text className="facility-item">
-              <Text className="facility-icon">🚗</Text>
-              <Text className="facility-text">停车场</Text>
-            </Text>
-            <Text className="facility-item">
-              <Text className="facility-icon">🧹</Text>
-              <Text className="facility-text">清洁</Text>
-            </Text>
-            <Text className="facility-item">
-              <Text className="facility-icon">👨‍💼</Text>
-              <Text className="facility-text">服务</Text>
-            </Text>
-          </>
-        )}
-        <Text className="facility-more">更多 ▾</Text>
-      </View>
-
-      {/* 评分+位置栏 */}
-      <View className="score-address-row">
-        <View className="score-block">
-          <Text className="score">{hotelData.rating || hotelData.hotelInfo?.score || '0.0'}</Text>
-          <Text className="score-level">{hotelData.rating >= 4.5 ? '超棒' : hotelData.rating >= 4 ? '很好' : '不错'}</Text>
-          <Text className="comment-count">{hotelData.review_count || hotelData.hotelInfo?.commentCount || 0}条 &gt;</Text>
-          {hotelData.hotelInfo?.scoreDesc && <Text className="score-desc">{hotelData.hotelInfo.scoreDesc}</Text>}
+      {loading && (
+        <View className="loading-container">
+          <Text className="loading-text">加载中...</Text>
         </View>
-        <View className="address-block">
-          {hotelData.hotelInfo?.distance && <Text className="distance">{hotelData.hotelInfo.distance}</Text>}
-          <Text className="address">{hotelData.address || hotelData.hotelInfo?.address || '酒店地址'}</Text>
-          <Text className="map-btn">查看地图</Text>
-        </View>
-      </View>
+      )}
 
-      {/* 优惠标签栏 */}
-      <View className="discount-row">
-        {(hotelData.tags || hotelData.discountTags || []).slice(0, 3).map((tag, idx) => (
-          <Text key={idx} className="discount-tag">{tag}</Text>
-        ))}
-        <Text className="coupon-btn">领券</Text>
-      </View>
+      {!loading && hotelInfo && (
+        <ScrollView className="detail-scroll" scrollY>
+          <View className="hero-section">
+            <Swiper
+              className="hero-swiper"
+              circular
+              indicatorDots={false}
+              autoplay={false}
+              onChange={(e) => setCurrentImageIndex(e.detail.current)}
+            >
+              {heroImages.map((url, index) => (
+                <SwiperItem key={`${url}-${index}`} className="hero-swiper-item">
+                  <Image className="hero-image" src={url} mode="aspectFill" />
+                </SwiperItem>
+              ))}
+            </Swiper>
+            <View className="hero-indicators">
+              <Text className="hero-indicator-text">{Math.min(currentImageIndex + 1, heroImages.length)}/{heroImages.length}</Text>
+            </View>
+            <View className="favorite-button" onClick={handleCollectClick}>
+              <Text className={`favorite-icon ${collected ? 'active' : ''}`}>★</Text>
+            </View>
+          </View>
 
-      {/* 日期+房间人数栏 */}
-      <View className="date-guest-row">
-        <View className="date-part">
-          <Text className="date">{hotelData.dateRange || `${new Date().toISOString().split('T')[0]} - ${new Date(Date.now() + 86400000).toISOString().split('T')[0]}`}</Text>
-          <Text className="night">{hotelData.stayNight || '1晚'}</Text>
-        </View>
-        <Text className="guest">{hotelData.roomGuest || '1间 1人'}</Text>
-      </View>
-
-      {/* 房型筛选栏 */}
-      <View className="room-filter-row">
-        <Text 
-          className={`filter-tag ${selectedFilters.includes('双床房') ? 'selected' : ''}`} 
-          onClick={() => handleFilterTagClick('双床房')}
-        >
-          双床房
-        </Text>
-        <Text 
-          className={`filter-tag ${selectedFilters.includes('家庭房') ? 'selected' : ''}`} 
-          onClick={() => handleFilterTagClick('家庭房')}
-        >
-          家庭房
-        </Text>
-        <Text 
-          className={`filter-tag ${selectedFilters.includes('大床房') ? 'selected' : ''}`} 
-          onClick={() => handleFilterTagClick('大床房')}
-        >
-          大床房
-        </Text>
-        <Text 
-          className={`filter-tag ${selectedFilters.includes('免费取消') ? 'selected' : ''}`} 
-          onClick={() => handleFilterTagClick('免费取消')}
-        >
-          免费取消
-        </Text>
-        <Text 
-          className={`filter-tag ${selectedFilters.includes('≥35㎡') ? 'selected' : ''}`} 
-          onClick={() => handleFilterTagClick('≥35㎡')}
-        >
-          ≥35㎡
-        </Text>
-        <View className="filter-more" onClick={handleFilterClick}>
-          筛选 ▾
-        </View>
-      </View>
-
-      {/* 房型列表 */}
-      <View className="room-list">
-        <View className="recommend-tag">
-          <Text className="tag-icon">♦</Text>
-          <Text className="tag-text">猜您喜欢 本店大床房销量No.1</Text>
-        </View>
-        {((hotelData.room_types || hotelData.roomList) || []).map((room) => (
-          <View key={room.id} className="room-item">
-            <Image className="room-img" src={room.image_url || room.img || (hotelData.main_image_url && hotelData.main_image_url[0])} mode="widthFix" />
-            <View className="room-info">
-              <View className="room-header">
-                <Text className="room-name">{room.name}</Text>
-                <Text className="room-code">{room.id}</Text>
+          <View className="hotel-title-section">
+            <View className="hotel-title-row">
+              <View className="hotel-title-texts">
+                <Text className="hotel-title-cn">{hotelInfo.hotel_name_cn}</Text>
+                <Text className="hotel-title-en">{hotelInfo.hotel_name_en}</Text>
               </View>
-              <Text className="room-desc">{room.description || room.desc || '房间描述'}</Text>
-              <Text className="room-note">{room.note || '入住时间14:00后 | 退房时间12:00前'}</Text>
-              {room.service && <Text className="room-service">{room.service}</Text>}
-              <View className="room-tags">
-                {(room.amenities || room.tags || []).slice(0, 3).map((item, idx) => (
-                  <Text key={idx} className="tag">{item}</Text>
-                ))}
+              <View className="hotel-star">
+                <Text className="hotel-star-text">{hotelInfo.star_rating}星</Text>
               </View>
-              <View className="price-book-row">
-                <View className="price-part">
-                  <Text className="original-price">¥{room.original_price || room.originalPrice || 0}</Text>
-                  <Text className="current-price">¥{room.price || room.currentPrice || 0}</Text>
-                  <Text className="discount-info">新客体验钻石 会员出行 4项优惠</Text>
-                </View>
-                {/* 核心修改：跳转路径改为 /pages/booking-confirm/index */}
-                <View 
-                  className="book-btn" 
-                  onClick={() => Taro.navigateTo({
-                    url: `/pages/booking-confirm/index?hotelId=${hotelData.id}&roomId=${room.id}`
-                  })}
-                >
-                  预订
-                </View>
+            </View>
+            {hotelInfo.description && (
+              <View className="hotel-description-container">
+                <Text className="hotel-description-text">{hotelInfo.description}</Text>
+              </View>
+            )}
+          </View>
+
+          <View className="rating-location-card">
+            <View className="rating-block">
+              <Text className="rating-score">{hotelInfo.rating}</Text>
+              <Text className="rating-count">{hotelInfo.review_count}条评价</Text>
+            </View>
+            <View className="location-block">
+              <Text className="location-address">{hotelInfo.location_info?.formatted_address || ''}</Text>
+              <Text className="location-nearby">{hotelInfo.nearby_info || ''}</Text>
+              <View className="map-button" onClick={() => setShowMapModal(true)}>
+                <Text className="map-button-text">查看地图</Text>
               </View>
             </View>
           </View>
-        ))}
-      </View>
 
-      {/* 筛选面板 */}
-      {showFilterPanel && (
-        <View className="filter-panel">
-          <View className="filter-panel-header">
-            <Text className="filter-panel-title">筛选</Text>
-            <Text className="filter-panel-close" onClick={handleFilterClick}>×</Text>
+          <View className="info-card">
+            <Text className="info-title">服务与设施</Text>
+            <View className="facilities-services-group">
+              <View className="fs-row">
+                <Text className="fs-label">服务</Text>
+                <ScrollView scrollX className="h-scroll" enhanced>
+                  <View className="h-scroll-inner">
+                    {(hotelInfo.services || []).map((service, index) => (
+                      <View key={`${service.id || service.name || index}`} className="chip">
+                        <Text className="chip-text">{service.name || service.id || service}</Text>
+                      </View>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+              <View className="fs-divider" />
+              <View className="fs-row">
+                <Text className="fs-label">设施</Text>
+                <ScrollView scrollX className="h-scroll" enhanced>
+                  <View className="h-scroll-inner">
+                    {(hotelInfo.facilities || []).map((facility, index) => (
+                      <View key={`${facility.id || facility.name || index}`} className="chip">
+                        <Text className="chip-text">{facility.name || facility.id || facility}</Text>
+                      </View>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+            </View>
           </View>
-          <ScrollView className="filter-panel-content">
-            {/* 房型 */}
-            <View className="filter-section">
-              <Text className="filter-section-title">房型</Text>
-              <View className="filter-options">
-                <Text 
-                  className={`filter-option ${filterOptions.roomTypes.includes('大床房') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('roomTypes', '大床房')}
-                >
-                  大床房
-                </Text>
-                <Text 
-                  className={`filter-option ${filterOptions.roomTypes.includes('双床房') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('roomTypes', '双床房')}
-                >
-                  双床房
-                </Text>
-                <Text 
-                  className={`filter-option ${filterOptions.roomTypes.includes('三床房') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('roomTypes', '三床房')}
-                >
-                  三床房
-                </Text>
-                <Text 
-                  className={`filter-option ${filterOptions.roomTypes.includes('电竞房') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('roomTypes', '电竞房')}
-                >
-                  电竞房
-                </Text>
-                <Text 
-                  className={`filter-option ${filterOptions.roomTypes.includes('多床房') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('roomTypes', '多床房')}
-                >
-                  多床房
-                </Text>
+
+          <View className="info-card">
+            <Text className="info-title">政策</Text>
+            <View className="policy-table">
+              <View className="policy-row">
+                <Text className="policy-label">取消</Text>
+                <Text className="policy-value">{hotelInfo.policies?.cancellation || '-'}</Text>
+              </View>
+              <View className="policy-row">
+                <Text className="policy-label">支付</Text>
+                <Text className="policy-value">{hotelInfo.policies?.payment || '-'}</Text>
+              </View>
+              <View className="policy-row">
+                <Text className="policy-label">儿童</Text>
+                <Text className="policy-value">{hotelInfo.policies?.children || '-'}</Text>
+              </View>
+              <View className="policy-row">
+                <Text className="policy-label">宠物</Text>
+                <Text className="policy-value">{hotelInfo.policies?.pets || '-'}</Text>
               </View>
             </View>
-            
-            {/* 设施 */}
-            <View className="filter-section">
-              <Text className="filter-section-title">设施</Text>
-              <View className="filter-options">
-                <Text 
-                  className={`filter-option ${filterOptions.facilities.includes('空调') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('facilities', '空调')}
-                >
-                  空调
-                </Text>
-                <Text 
-                  className={`filter-option ${filterOptions.facilities.includes('电脑') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('facilities', '电脑')}
-                >
-                  电脑
-                </Text>
-                <Text 
-                  className={`filter-option ${filterOptions.facilities.includes('客房宽带') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('facilities', '客房宽带')}
-                >
-                  客房宽带
-                </Text>
-                <Text 
-                  className={`filter-option ${filterOptions.facilities.includes('吹风机') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('facilities', '吹风机')}
-                >
-                  吹风机
-                </Text>
+          </View>
+
+          <View className="date-card">
+            <View className="date-item" onClick={() => setShowDateSelector(true)}>
+              <Text className="date-label">入住</Text>
+              <Text className="date-value">{checkInDate}</Text>
+            </View>
+            <View className="date-separator">
+              <Text className="date-night">{nightCount}晚</Text>
+            </View>
+            <View className="date-item" onClick={() => setShowDateSelector(true)}>
+              <Text className="date-label">离店</Text>
+              <Text className="date-value">{checkOutDate}</Text>
+            </View>
+          </View>
+
+          <View className="room-list-section">
+            {rooms.map(room => {
+              const averagePrice = getAveragePrice(room);
+              const isExpanded = !!expandedRooms[room.id];
+              return (
+                <View key={room.id} className={`room-card ${isExpanded ? 'expanded' : ''}`}>
+                  <Image className="room-card-image" src={room.room_image_url || 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hotel%20room%20interior%20default%20placeholder&image_size=landscape_4_3'} mode="aspectFill" />
+                  <View className="room-card-body">
+                    <View className="room-card-header">
+                      <Text className="room-card-name">{room.name}</Text>
+                      <Text className="room-card-price">¥{averagePrice}/晚</Text>
+                    </View>
+                    <Text className="room-card-meta">{room.bed_type} | {room.area}㎡</Text>
+                    <Text className="room-card-desc">{room.description}</Text>
+                    <View className="room-chip-row">
+                      {(room.tags || []).map((tag, index) => (
+                        <View key={`${tag}-${index}`} className="tag-chip">
+                          <Text className="tag-chip-text">{tag}</Text>
+                        </View>
+                      ))}
+                    </View>
+                    <View className="room-info-row">
+                      <Text className="room-info-label">设施</Text>
+                      <View className="room-info-chips">
+                        {(room.facilities || []).map((item, index) => (
+                          <View key={`${item.name || item.id || item}-${index}`} className="info-chip">
+                            <Text className="info-chip-text">{item.name || item.id || item}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                    <View className="room-info-row">
+                      <Text className="room-info-label">服务</Text>
+                      <View className="room-info-chips">
+                        {(room.services || []).map((item, index) => (
+                          <View key={`${item.name || item.id || item}-${index}`} className="info-chip">
+                            <Text className="info-chip-text">{item.name || item.id || item}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                    <View className="room-card-footer">
+                      <View className="price-tag">
+                        <Text className="price-tag-value">¥{averagePrice}</Text>
+                        <Text className="price-tag-unit">均价/晚</Text>
+                      </View>
+                      <View
+                        className="book-button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBookClick({ ...room, price: averagePrice });
+                        }}
+                      >
+                        立即预订
+                      </View>
+                    </View>
+                    
+                    <View className="room-expand-button" onClick={() => toggleRoomExpand(room.id)}>
+                      <Text className="room-expand-text">{isExpanded ? '收起政策' : '查看政策'}</Text>
+                      <Text className={`room-expand-icon ${isExpanded ? 'expanded' : ''}`}>⌄</Text>
+                    </View>
+
+                    {isExpanded && (
+                      <View className="policy-table">
+                        <View className="policy-row">
+                          <Text className="policy-label">取消</Text>
+                          <Text className="policy-value">{room.policies?.cancellation || '-'}</Text>
+                        </View>
+                        <View className="policy-row">
+                          <Text className="policy-label">支付</Text>
+                          <Text className="policy-value">{room.policies?.payment || '-'}</Text>
+                        </View>
+                        <View className="policy-row">
+                          <Text className="policy-label">儿童</Text>
+                          <Text className="policy-value">{room.policies?.children || '-'}</Text>
+                        </View>
+                        <View className="policy-row">
+                          <Text className="policy-label">宠物</Text>
+                          <Text className="policy-value">{room.policies?.pets || '-'}</Text>
+                        </View>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        </ScrollView>
+      )}
+
+      {!loading && !hotelId && (
+        <View className="content-container">
+          <Text className="hotel-id">酒店ID: 未获取到</Text>
+          <Text className="page-title">酒店详情页</Text>
+          <Text className="page-desc">请从正确的入口进入酒店详情页</Text>
+        </View>
+      )}
+
+      <DateSelector
+        visible={showDateSelector}
+        onCancel={() => setShowDateSelector(false)}
+        onConfirm={handleDateConfirm}
+        initialCheckIn={checkInDate}
+        initialCheckOut={checkOutDate}
+      />
+
+      {showMapModal && (
+        <View className="map-modal" onClick={() => setShowMapModal(false)}>
+          <View className="map-modal-content" onClick={(e) => e.stopPropagation()}>
+            <View className="map-modal-header">
+              <Text className="map-modal-title">地图位置</Text>
+              <View className="map-modal-close" onClick={() => setShowMapModal(false)}>
+                <Text className="map-modal-close-text">✕</Text>
               </View>
             </View>
-            
-            {/* 服务优选 */}
-            <View className="filter-section">
-              <Text className="filter-section-title">服务优选</Text>
-              <View className="filter-options">
-                <Text 
-                  className={`filter-option ${filterOptions.services.includes('可取消') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('services', '可取消')}
-                >
-                  可取消
-                </Text>
-                <Text 
-                  className={`filter-option ${filterOptions.services.includes('不满意退') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('services', '不满意退')}
-                >
-                  不满意退
-                </Text>
-                <Text 
-                  className={`filter-option ${filterOptions.services.includes('可订') ? 'selected' : ''}`}
-                  onClick={() => handleFilterOptionClick('services', '可订')}
-                >
-                  可订
-                </Text>
-              </View>
-            </View>
-          </ScrollView>
-          <View className="filter-panel-footer">
-            <Text className="filter-reset-btn" onClick={handleResetFilter}>重置</Text>
-            <View className="filter-confirm-btn" onClick={handleConfirmFilter}>
-              <Text className="filter-confirm-text">确定</Text>
-            </View>
+            <View className="map-container" ref={mapWrapperRef} />
           </View>
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 }

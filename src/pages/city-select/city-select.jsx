@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Input, Button } from '@tarojs/components'
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter, navigateTo, redirectTo, showToast } from '@tarojs/taro'
+import { useRouter, navigateTo, redirectTo, showToast, getCurrentPages, navigateBack, getStorageSync, setStorageSync } from '@tarojs/taro'
 import './city-select.less'
 
 export default function CitySelect () {
@@ -9,6 +9,7 @@ export default function CitySelect () {
   const [filteredCities, setFilteredCities] = useState([])
   const [currentLetter, setCurrentLetter] = useState('')
   const [showLetter, setShowLetter] = useState(false)
+  const [searchHistory, setSearchHistory] = useState([])
 
   // 全国城市数据
   const citiesData = {
@@ -193,21 +194,43 @@ export default function CitySelect () {
   // 所有城市字母
   const letters = Object.keys(citiesData).filter(key => key !== 'hot')
 
-  // 处理城市选择
-  const handleCitySelect = useCallback((city) => {
-    console.log('选择城市:', city)
-    console.log('路由参数:', router.query)
-    
-    // 获取返回URL，如果没有则默认返回首页
-    const returnUrl = router.query.returnUrl || '/pages/index/index'
-    console.log('返回URL:', returnUrl)
-    
-    // 返回指定页面并传递选择的城市
-    // 使用redirectTo替换当前页面，避免在导航栈中添加新页面
-    redirectTo({
-      url: `${returnUrl}?city=${encodeURIComponent(city.name)}`
-    })
-  }, [router.query])
+  // 加载搜索历史
+  const loadSearchHistory = useCallback(() => {
+    try {
+      const history = getStorageSync('citySearchHistory') || []
+      setSearchHistory(history)
+    } catch (error) {
+      console.error('加载搜索历史失败:', error)
+      setSearchHistory([])
+    }
+  }, [])
+
+  // 保存搜索历史
+  const saveSearchHistory = useCallback((cityName) => {
+    if (!cityName.trim()) return
+    try {
+      let history = getStorageSync('citySearchHistory') || []
+      history = history.filter(item => item !== cityName)
+      history.unshift(cityName)
+      if (history.length > 5) {
+        history = history.slice(0, 5)
+      }
+      setStorageSync('citySearchHistory', history)
+      setSearchHistory(history)
+    } catch (error) {
+      console.error('保存搜索历史失败:', error)
+    }
+  }, [])
+
+  // 清除搜索历史
+  const clearSearchHistory = useCallback(() => {
+    try {
+      setStorageSync('citySearchHistory', [])
+      setSearchHistory([])
+    } catch (error) {
+      console.error('清除搜索历史失败:', error)
+    }
+  }, [])
 
   // 处理搜索
   const handleSearch = useCallback((keyword) => {
@@ -229,6 +252,62 @@ export default function CitySelect () {
     setFilteredCities(filtered)
   }, [])
 
+  // 处理城市选择
+  const handleCitySelect = useCallback((city) => {
+    console.log('选择城市:', city)
+    console.log('路由参数:', router.query)
+    
+    // 保存到搜索历史
+    saveSearchHistory(city.name)
+    
+    // 获取返回URL，如果没有则默认返回首页
+    let returnUrl = (router.query && router.query.returnUrl) || '/pages/index/index'
+    console.log('返回URL:', returnUrl)
+    
+    // 确保返回URL包含/pages前缀
+    if (!returnUrl.startsWith('/pages')) {
+      returnUrl = `/pages${returnUrl}`
+    }
+    console.log('修正后的返回URL:', returnUrl)
+    
+    // 检查返回URL是否已经包含参数
+    const separator = returnUrl.includes('?') ? '&' : '?'
+    
+    // 构建完整的跳转URL
+    const jumpUrl = `${returnUrl}${separator}city=${encodeURIComponent(city.name)}&cityName=${encodeURIComponent(city.name)}`
+    console.log('跳转URL:', jumpUrl)
+    
+    // 使用navigateTo跳转到指定页面
+    try {
+      navigateTo({
+        url: jumpUrl,
+        success: () => {
+          console.log('跳转成功')
+        },
+        fail: (error) => {
+          console.error('跳转失败:', error)
+          // 如果navigateTo失败，尝试使用redirectTo
+          redirectTo({
+            url: jumpUrl,
+            success: () => {
+              console.log('使用redirectTo跳转成功')
+            },
+            fail: (error) => {
+              console.error('使用redirectTo跳转失败:', error)
+            }
+          })
+        }
+      })
+    } catch (error) {
+      console.error('跳转异常:', error)
+    }
+  }, [router.query, saveSearchHistory])
+
+  // 组件挂载时加载搜索历史
+  useEffect(() => {
+    loadSearchHistory()
+  }, [loadSearchHistory])
+
   // 处理字母点击
   const handleLetterClick = useCallback((letter) => {
     setCurrentLetter(letter)
@@ -237,6 +316,45 @@ export default function CitySelect () {
       setShowLetter(false)
     }, 500)
   }, [])
+
+  // 渲染搜索历史
+  const renderSearchHistory = () => {
+    if (searchHistory.length === 0 || searchKeyword) {
+      return null
+    }
+
+    return (
+      <View className='city-section'>
+        <View className='section-header'>
+          <Text className='section-title'>搜索历史</Text>
+          <Text className='clear-history' onClick={clearSearchHistory}>清除</Text>
+        </View>
+        <View className='history-cities'>
+          {searchHistory.map((cityName, index) => (
+            <View 
+              key={index} 
+              className='history-city-item'
+              onClick={() => {
+                // 查找对应的城市对象
+                let targetCity = null
+                Object.values(citiesData).forEach(cityList => {
+                  const city = cityList.find(c => c.name === cityName)
+                  if (city) {
+                    targetCity = city
+                  }
+                })
+                if (targetCity) {
+                  handleCitySelect(targetCity)
+                }
+              }}
+            >
+              <Text>{cityName}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    )
+  }
 
   // 渲染热门城市
   const renderHotCities = () => {
@@ -320,7 +438,7 @@ export default function CitySelect () {
           className='search-input'
           placeholder='输入城市名称搜索'
           value={searchKeyword}
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => handleSearch(e.detail.value)}
         />
       </View>
 
@@ -334,6 +452,7 @@ export default function CitySelect () {
           renderSearchResults()
         ) : (
           <>
+            {renderSearchHistory()}
             {renderHotCities()}
             {renderCityList()}
           </>

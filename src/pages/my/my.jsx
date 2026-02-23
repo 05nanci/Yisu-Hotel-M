@@ -1,57 +1,59 @@
 import { View, Text, Button, Image } from '@tarojs/components'
 import { useCallback, useState, useEffect } from 'react'
 import Taro from '@tarojs/taro'
-import { userApi } from '../../services/api'
+import { userApi, orderApi } from '../../services/api'
 import './my.less'
 
 export default function MyPage () {
   // 状态管理
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userInfo, setUserInfo] = useState(null)
+  const [pendingPayCount, setPendingPayCount] = useState(0)
+
+  // 获取待支付订单数量
+  const fetchPendingPayCount = async () => {
+    try {
+      const token = Taro.getStorageSync('token')
+      if (!token) {
+        setPendingPayCount(0)
+        return
+      }
+      
+      const response = await orderApi.getOrders({ status: 'pending' })
+      if (response.code === 0 && response.data) {
+        const pendingOrders = response.data.list || []
+        setPendingPayCount(pendingOrders.length)
+      } else {
+        setPendingPayCount(0)
+      }
+    } catch (error) {
+      console.error('获取待支付订单数量失败:', error)
+      setPendingPayCount(0)
+    }
+  }
 
   // 初始化时检查登录状态并获取用户信息
   useEffect(() => {
     const checkLoginStatus = async () => {
       const loggedIn = Taro.getStorageSync('isLoggedIn')
       const token = Taro.getStorageSync('token')
+      const userInfo = Taro.getStorageSync('userInfo')
       
-      if (loggedIn && token) {
-        try {
-          // 尝试使用不同的API方法获取用户信息
-          let response;
-          try {
-            response = await userApi.getProfile();
-          } catch (e) {
-            try {
-              response = await userApi.getUserInfo();
-            } catch (e2) {
-              throw e2;
-            }
-          }
-          
-          if (response.code === 0 && response.data) {
-            const userData = response.data
-            setIsLoggedIn(true)
-            setUserInfo(userData)
-            // 更新本地存储的用户信息
-            Taro.setStorageSync('userInfo', userData)
-          } else {
-            // 获取用户信息失败，可能是token过期
-            Taro.setStorageSync('isLoggedIn', false)
-            Taro.setStorageSync('token', '')
-            Taro.setStorageSync('userInfo', null)
-            setIsLoggedIn(false)
-            setUserInfo(null)
-          }
-        } catch (error) {
-          console.error('获取用户信息失败:', error)
-          // 网络错误或其他问题，保持本地存储的状态
-          const info = Taro.getStorageSync('userInfo')
-          if (info) {
-            setIsLoggedIn(true)
-            setUserInfo(info)
-          }
-        }
+      console.log('检查登录状态:', {
+        loggedIn,
+        token: token ? '存在' : '不存在',
+        userInfo: userInfo ? userInfo : '不存在'
+      })
+      
+      if (loggedIn || token || userInfo) {
+        setIsLoggedIn(true)
+        setUserInfo(userInfo)
+        // 获取待支付订单数量
+        fetchPendingPayCount()
+      } else {
+        setIsLoggedIn(false)
+        setUserInfo(null)
+        setPendingPayCount(0)
       }
     }
     checkLoginStatus()
@@ -80,6 +82,21 @@ export default function MyPage () {
       Taro.navigateTo({
         url: '/pages/history/history'
       })
+    } else if (menu === 'ai_assistant') {
+      // 跳转到AI助手页面
+      Taro.navigateTo({
+        url: '/pages/ai-assistant/ai-assistant'
+      })
+    } else if (menu === 'customer_service') {
+      // 跳转到客服中心页面
+      Taro.redirectTo({
+        url: '/pages/customer-service/customer-service'
+      })
+    } else if (menu === 'help_center') {
+      // 跳转到帮助中心页面
+      Taro.navigateTo({
+        url: '/pages/help-center/help-center'
+      })
     }
   }, [])
 
@@ -101,7 +118,7 @@ export default function MyPage () {
     <View className='my-page'>
       {/* 个人信息区域 */}
       {isLoggedIn && userInfo ? (
-        <View className='user-info-section'>
+        <View className='user-info-section' onClick={() => Taro.navigateTo({ url: '/pages/settings/settings' })}>
           <Image 
             className='user-avatar' 
             src={userInfo.avatar || userInfo.profile?.avatar || 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%20portrait%20placeholder&image_size=square'} 
@@ -140,7 +157,9 @@ export default function MyPage () {
           <View className='order-status-item' onClick={() => handleOrderStatusClick('pending_pay')}>
             <View className='order-status-icon'>💳</View>
             <Text className='order-status-text'>待支付</Text>
-            <View className='order-status-badge'>2</View>
+            {pendingPayCount > 0 && (
+              <View className='order-status-badge'>{pendingPayCount}</View>
+            )}
           </View>
           <View className='order-status-item' onClick={() => handleOrderStatusClick('pending_confirm')}>
             <View className='order-status-icon'>⏳</View>
@@ -188,6 +207,9 @@ export default function MyPage () {
         </View>
         <View className='help-item' onClick={() => handleMenuClick('help_center')}>
           <Text className='help-text'>帮助中心</Text>
+        </View>
+        <View className='help-item' onClick={() => handleMenuClick('ai_assistant')}>
+          <Text className='help-text'>AI助手</Text>
         </View>
       </View>
 

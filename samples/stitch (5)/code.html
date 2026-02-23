@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hotel Detail - Luxury Stay</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --primary-color: #1a202c;--secondary-color: #2d3748;
+            --accent-color: #c0a062;--bg-color: #f7fafc;
+            --text-primary: #1a202c;
+            --text-secondary: #718096;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+        }
+        h1, h2, h3, .serif-font {
+            font-family: 'Playfair Display', serif;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body>
+<nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-20">
+<div class="flex items-center cursor-pointer">
+<span class="material-symbols-outlined text-[var(--primary-color)] text-3xl mr-2">diamond</span>
+<span class="serif-font text-2xl font-bold text-[var(--primary-color)]">LuxeStays</span>
+</div>
+<div class="hidden sm:flex items-center space-x-8">
+<a class="text-gray-900 font-medium hover:text-[var(--accent-color)] transition" href="#">Destinations</a>
+<a class="text-gray-900 font-medium hover:text-[var(--accent-color)] transition" href="#">Experiences</a>
+<a class="text-gray-900 font-medium hover:text-[var(--accent-color)] transition" href="#">About</a>
+<div class="flex items-center space-x-2 text-gray-600 cursor-pointer">
+<span class="material-symbols-outlined">account_circle</span>
+<span>Sign In</span>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center text-sm text-gray-500">
+<a class="hover:text-[var(--primary-color)]" href="#">Home</a>
+<span class="mx-2">/</span>
+<a class="hover:text-[var(--primary-color)]" href="#">Japan</a>
+<span class="mx-2">/</span>
+<a class="hover:text-[var(--primary-color)]" href="#">Kyoto</a>
+<span class="mx-2">/</span>
+<span class="text-gray-900 font-medium">The Ritz-Carlton Kyoto</span>
+</div>
+<div class="flex space-x-4">
+<button class="flex items-center space-x-1 text-gray-600 hover:text-[var(--primary-color)] transition">
+<span class="material-symbols-outlined text-[20px]">share</span>
+<span class="text-sm font-medium">Share</span>
+</button>
+<button class="flex items-center space-x-1 text-gray-600 hover:text-red-500 transition">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+<span class="text-sm font-medium">Save</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-4 grid-rows-2 gap-2 h-[500px] mb-10 rounded-xl overflow-hidden shadow-sm">
+<div class="col-span-2 row-span-2 relative group cursor-pointer">
+<img alt="Main Hotel View" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZjJaYgHgY9aWj-TNFQfNBqXSMUqYJNMdxFELnFvz8SeZ0ouyhg5yx7L1e9gBzXnIZJJH9iwizvmsu7qnuWn85TzCtuZZIMTxlmnYv2Qh4v1wf_KlqKhsZcRMc54LmO55JPN8bm4LCoS7VWPQ5kXBH0FiQtHsUYyv-WI8Myg47g-CDcv0_jYx7jYvWbrXWzhC7LdNKdGGRYzqyaRUYvNd9zs_op5HXdCyEFRwK92QXbCodxqnDENNrqEXb-XJNJ-A0zUkdpTeKXxYu"/>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition"></div>
+</div>
+<div class="col-span-1 row-span-1 relative group cursor-pointer">
+<img alt="Hotel Interior" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqgFSPxAJJ4FT3W2ow-U4FAl0PGxvpmr5yw7-PZwDnrJO_GigyMaGFjRLjk_2xtqtNvBeG9sVZ0jt2YjzS6gSwzuYyzBs9inHEe0b2yh3tQZm-ngjpgdIxEZbHu-HyHXkIvzB-QuQ2lySofuFIqWJM0ZTNcOt6WXfIIbc6bTQUbzPr_tfSSRTTUp4XTPnZqs8AWX_MBly_fgXmdjPsOtBRMK8Hko-oyUPS13Sw9Y5p_A--jQEYVNeGO6tsFRzE1c0DDtnisVEy8U_7"/>
+</div>
+<div class="col-span-1 row-span-1 relative group cursor-pointer">
+<img alt="Hotel Room" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUnXQz2vaqM8m7ykIV23T7Etv7obN3S-CICkbVa9gIHC0ZccXi9J01J0Zs_-b7usNaZ2UqLCxBg7fyvFJyMKIctzS9ZdORKiwKrziFlmVmuAuEUxw7wyHceTi_yhmcZlDHWgox5onFcYh-taREBH3YOZYL6HvdL52R1qV4uST9OjLIKfQ9wzFepkl65Su9SLulpq4NosmXuA5JuGz4-OGP8d97jEQo4-aoAPdJGG1tyMPPKJedYB0H8p0viQqhOXPRqE-BUygESN-I"/>
+</div>
+<div class="col-span-1 row-span-1 relative group cursor-pointer">
+<img alt="Hotel Pool" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKEQdQC0b6WUiuycF1xnpvVBCi9rIG8DoZLRI5WhwbizquhkBgw2yyzJ8qjZU2FAOr-ImTzSYDRzjBwN07sMYmsNnFxS6WfLCLVv6tqIcVBs1WGtPhqJdYbjoC2Z8JBohJwSe_eYOc43czsaHSyKAglMVjMkzZ-dugxTwIkGT21IIlWe02v6jTZuNVgIPeajWCOKy9NK0dInnZC2bX5L6XrajgLp5BfSd9oS9MeGYGc_NTVRxrDMSt86pgGFkeLeaFY7eyH0W1L9jQ"/>
+</div>
+<div class="col-span-1 row-span-1 relative group cursor-pointer">
+<img alt="Hotel Dining" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCER3ukL-_HMEhTqEDazOupCzlTcq5kkUYUxggE8kyWDgpC3W6tTrqMK47JggMQoo6xo6L-t9gPAuWwqkDiK5xY4zOJYwxBxt9A_V2l3oEMaGzKJ2tJp6YSXUEl4or1dlMSGdlf-x6DAASOt7uZFPfUoXge2-Ng3KHP_vM8DBppOCPN1wgX5ATOMbYMGRa1DCD-QE7BuhLu7f68l8JVzufsodgdI70fWS5_dCPNS-Y1GG1kcsVuhcrc2PcU-eL2uKNtGfO0coQ_zHUE"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+<span class="text-white font-medium flex items-center gap-1">
+<span class="material-symbols-outlined">grid_view</span> See All Photos
+                    </span>
+</div>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row gap-8 relative">
+<div class="w-full lg:w-[70%] space-y-10">
+<div class="border-b border-gray-200 pb-8">
+<div class="flex justify-between items-start">
+<div>
+<h1 class="text-4xl font-bold text-[var(--primary-color)] mb-2">The Ritz-Carlton Kyoto</h1>
+<div class="flex items-center text-gray-600 mb-4">
+<span class="material-symbols-outlined text-[var(--accent-color)] mr-1">star</span>
+<span class="material-symbols-outlined text-[var(--accent-color)] mr-1">star</span>
+<span class="material-symbols-outlined text-[var(--accent-color)] mr-1">star</span>
+<span class="material-symbols-outlined text-[var(--accent-color)] mr-1">star</span>
+<span class="material-symbols-outlined text-[var(--accent-color)] mr-2">star</span>
+<span class="text-sm bg-gray-100 px-2 py-0.5 rounded mr-3">5-Star Hotel</span>
+<span class="material-symbols-outlined text-gray-400 text-sm mr-1">location_on</span>
+<span class="text-sm underline cursor-pointer hover:text-[var(--primary-color)]">Kamogawa Nijo-Ohashi Hotori, Nakagyo Ward, Kyoto</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex items-center bg-[var(--primary-color)] text-white px-3 py-1.5 rounded-lg shadow-sm">
+<span class="text-xl font-bold mr-2">9.6</span>
+<span class="text-xs opacity-90">Exceptional</span>
+</div>
+<span class="text-xs text-gray-500 mt-1">Based on 1,240 reviews</span>
+</div>
+</div>
+<p class="text-gray-600 leading-relaxed mt-4">
+                        Experience the epitome of luxury at The Ritz-Carlton Kyoto. Nestled along the banks of the Kamogawa River, this modern ryokan-style hotel offers breathtaking views of the Higashiyama mountains. Indulge in world-class dining, a tranquil spa, and impeccable service that blends traditional Japanese hospitality with contemporary elegance.
+                    </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 border-b border-gray-200 pb-8">
+<div>
+<h3 class="text-xl font-bold text-[var(--primary-color)] mb-4">Popular Amenities</h3>
+<ul class="grid grid-cols-2 gap-y-3 gap-x-4">
+<li class="flex items-center text-gray-700">
+<span class="material-symbols-outlined mr-3 text-gray-400">pool</span>
+<span>Indoor Pool</span>
+</li>
+<li class="flex items-center text-gray-700">
+<span class="material-symbols-outlined mr-3 text-gray-400">spa</span>
+<span>Full-service Spa</span>
+</li>
+<li class="flex items-center text-gray-700">
+<span class="material-symbols-outlined mr-3 text-gray-400">wifi</span>
+<span>Free High-Speed WiFi</span>
+</li>
+<li class="flex items-center text-gray-700">
+<span class="material-symbols-outlined mr-3 text-gray-400">restaurant</span>
+<span>Michelin Star Dining</span>
+</li>
+<li class="flex items-center text-gray-700">
+<span class="material-symbols-outlined mr-3 text-gray-400">fitness_center</span>
+<span>Fitness Center</span>
+</li>
+<li class="flex items-center text-gray-700">
+<span class="material-symbols-outlined mr-3 text-gray-400">local_bar</span>
+<span>Bar/Lounge</span>
+</li>
+</ul>
+<button class="text-[var(--primary-color)] font-medium mt-4 hover:underline text-sm">View all 48 amenities</button>
+</div>
+<div class="rounded-xl overflow-hidden h-48 relative border border-gray-200 shadow-sm group cursor-pointer">
+<img alt="Map View" class="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnA9qAttIpGEJQZ1GLda_lkRyiaSvMOea9x5h0P7mUUqHHYH3CaD2Zp6Pg7grSEk-a9p_o3dHrQXbXBO0cSpb5_7Z9iE4riK7CU6digJ60B87rhXGEYFJPhFcaHgJ50Mc-VCeb1soa9NB67EJ0etmX4iLVMddo2KSA6ssY60k_8euKwFevmpSgmxD3nrXFoaKyWDkrKn02vqsjwxiAarEOwwIxufKmJH0Sz8Dm0MS54SNkrmsBgTAdG1-HenhMKrslY788aCo7_kdT"/>
+<div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+<span class="material-symbols-outlined text-4xl text-[var(--primary-color)] drop-shadow-md">location_on</span>
+<span class="bg-white px-4 py-2 rounded-full shadow-md text-sm font-bold text-[var(--primary-color)] mt-2 group-hover:scale-105 transition">Show on Map</span>
+</div>
+</div>
+</div>
+<div>
+<h2 class="text-2xl font-bold text-[var(--primary-color)] mb-6">Available Rooms</h2>
+<div class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition mb-6 overflow-hidden flex flex-col md:flex-row">
+<div class="w-full md:w-1/3 relative group">
+<img alt="Deluxe Room" class="w-full h-full object-cover min-h-[240px]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHRYwXfzPDplP7zdFle0vd6WgWxzF084K858EpqYju7u57Pkc4lLJUi_dd-Kb80eOjzFKOSC6AdvSHo-GU6_2mUAWCXI3nyFjAKdUC0Nbfk_Tx3bWw1hm6P9wENRNBzP7WviTX43wwVa6mSp4Z_973En9ABkqKUK3NSWwA1xC8FO-Uz_ZUI7gdeaFiyM_kT7ds98jWDkM0UzoXoDvr7wEg695syCCGwnqyqyQTl4hfMPjCQnuzwtjQJn2fNLdIPKBPbV8BWnDkbsgm"/>
+<div class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">photo_camera</span> 5 Photos
+                            </div>
+</div>
+<div class="p-6 w-full md:w-2/3 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-xl font-bold text-gray-900">Deluxe Garden View King</h3>
+<p class="text-gray-500 text-sm mt-1">50 m² • Garden view • King bed</p>
+</div>
+<div class="text-right">
+<span class="block text-2xl font-bold text-[var(--primary-color)]">¥85,000</span>
+<span class="text-xs text-gray-500">per night</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md border border-gray-200">Non-smoking</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md border border-gray-200">Bathtub</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md border border-gray-200">City View</span>
+<span class="px-2 py-1 bg-green-50 text-green-700 text-xs rounded-md border border-green-200">Breakfast Included</span>
+</div>
+<div class="text-sm text-gray-600 space-y-1 mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-green-600">check_circle</span>
+<span>Free cancellation before Nov 12</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-green-600">check_circle</span>
+<span>No prepayment needed</span>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-auto">
+<button class="text-[var(--primary-color)] text-sm font-medium hover:underline flex items-center">
+                                    Room Details <span class="material-symbols-outlined text-[16px] ml-1">expand_more</span>
+</button>
+<button class="bg-[var(--primary-color)] text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition shadow-sm hover:shadow active:scale-95">
+                                    Book Now
+                                </button>
+</div>
+</div>
+</div>
+<div class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition mb-6 overflow-hidden flex flex-col md:flex-row">
+<div class="w-full md:w-1/3 relative group">
+<img alt="Luxury Suite" class="w-full h-full object-cover min-h-[240px]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv9RUzJimpEalOxw0ivFEfYT5lqtokpO0WSCweUeTLtunlH_52BuIYae3Wb7jiELm2ZAuBNega68EUkaKBRAefDmNR0uFibUpn6OXjdYVNO5OwyZuUVY50XZ56omQ7YbAm_QLXlo2V7dhhqN_RaUaIQJF40k0uxSluAM2Ok9qQtkY_-QE7RYom1IPXDH8NivvAFmrDm1RBKiacXE4nf1SpYjiQpifopftgQNlEUv4hqsrxdJ5nQAL_1DVBBboA6WppGmPFxbd__qa9"/>
+<div class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">photo_camera</span> 8 Photos
+                            </div>
+</div>
+<div class="p-6 w-full md:w-2/3 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-xl font-bold text-gray-900">Executive Luxury Suite</h3>
+<p class="text-gray-500 text-sm mt-1">72 m² • River view • 1 King bed</p>
+</div>
+<div class="text-right">
+<span class="block text-2xl font-bold text-[var(--primary-color)]">¥125,000</span>
+<span class="text-xs text-gray-500">per night</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md border border-gray-200">Living Area</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md border border-gray-200">Spa Bath</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md border border-gray-200">River View</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md border border-gray-200">Executive Access</span>
+</div>
+<div class="text-sm text-gray-600 space-y-1 mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-green-600">check_circle</span>
+<span>Free cancellation before Nov 10</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-gray-400">info</span>
+<span>Pay at hotel</span>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-auto">
+<button class="text-[var(--primary-color)] text-sm font-medium hover:underline flex items-center">
+                                    Room Details <span class="material-symbols-outlined text-[16px] ml-1">expand_more</span>
+</button>
+<button class="bg-[var(--primary-color)] text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition shadow-sm hover:shadow active:scale-95">
+                                    Book Now
+                                </button>
+</div>
+</div>
+</div>
+<div class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition mb-6 overflow-hidden flex flex-col md:flex-row">
+<div class="w-full md:w-1/3 relative group">
+<img alt="Family Room" class="w-full h-full object-cover min-h-[240px]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9So0AyNhgDBqqknCVBtfZNFoeCfrZIXcmW7htkmczq5_YIBBGtgESgZAv0BQcn5oS5-s_1saBoTxGVbRhUvAyMkwM_jUn-AyPc55v3hMinB6j6qfLG1oP6I6p7MiJtqOMFKRJKmZT0JP4DQfGRG06qbIYWRgV5f8gCb_zSIHzJXY7UeKh2HZnNhanpZCwX17DCzlqt7_d6P_HRl5FEBCP38sNF67xYQyBc1If7vvwQI6RHYTDhWsbVh2ffE4xehU3acD2IJ9XvzL-"/>
+<div class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">photo_camera</span> 4 Photos
+                            </div>
+</div>
+<div class="p-6 w-full md:w-2/3 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-xl font-bold text-gray-900">Corner Twin Room</h3>
+<p class="text-gray-500 text-sm mt-1">60 m² • City view • 2 Twin beds</p>
+</div>
+<div class="text-right">
+<span class="block text-2xl font-bold text-[var(--primary-color)]">¥95,000</span>
+<span class="text-xs text-gray-500">per night</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md border border-gray-200">Corner Unit</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md border border-gray-200">Extra Space</span>
+<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-md border border-gray-200">Work Desk</span>
+</div>
+<div class="text-sm text-gray-600 space-y-1 mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-orange-600">error</span>
+<span class="text-orange-600">Non-refundable</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-green-600">check_circle</span>
+<span>Instant Confirmation</span>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-auto">
+<button class="text-[var(--primary-color)] text-sm font-medium hover:underline flex items-center">
+                                    Room Details <span class="material-symbols-outlined text-[16px] ml-1">expand_more</span>
+</button>
+<button class="bg-[var(--primary-color)] text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition shadow-sm hover:shadow active:scale-95">
+                                    Book Now
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-6 border-t border-gray-200">
+<h3 class="text-xl font-bold text-[var(--primary-color)] mb-4">Hotel Policies</h3>
+<div class="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
+<div class="flex p-4">
+<div class="w-1/4 text-gray-500 font-medium">Check-in</div>
+<div class="w-3/4 text-gray-900">From 15:00</div>
+</div>
+<div class="flex p-4">
+<div class="w-1/4 text-gray-500 font-medium">Check-out</div>
+<div class="w-3/4 text-gray-900">Until 12:00</div>
+</div>
+<div class="flex p-4">
+<div class="w-1/4 text-gray-500 font-medium">Cancellation/Prepayment</div>
+<div class="w-3/4 text-gray-900">Cancellation and prepayment policies vary according to accommodation type. Please enter the dates of your stay and check the conditions of your required room.</div>
+</div>
+<div class="flex p-4">
+<div class="w-1/4 text-gray-500 font-medium">Children &amp; Beds</div>
+<div class="w-3/4 text-gray-900">Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.</div>
+</div>
+</div>
+</div>
+<div class="pt-6">
+<h3 class="text-xl font-bold text-[var(--primary-color)] mb-4">Guest Reviews</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+<div class="flex items-center mb-2">
+<div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold mr-2">JD</div>
+<span class="text-sm font-bold">John Doe</span>
+<span class="text-xs text-gray-400 ml-auto">Oct 12, 2023</span>
+</div>
+<p class="text-sm text-gray-600">"Absolutely stunning property. The service was impeccable from the moment we arrived."</p>
+</div>
+<div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+<div class="flex items-center mb-2">
+<div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold mr-2">SA</div>
+<span class="text-sm font-bold">Sarah A.</span>
+<span class="text-xs text-gray-400 ml-auto">Sep 28, 2023</span>
+</div>
+<p class="text-sm text-gray-600">"The room view was exactly as described. Breakfast was a highlight of our trip."</p>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full lg:w-[30%] relative">
+<div class="sticky top-24 space-y-4">
+<div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+<div class="bg-[var(--primary-color)] p-4 text-white">
+<h3 class="text-lg font-bold text-center">Your Booking</h3>
+</div>
+<div class="p-6 space-y-6">
+<div class="space-y-4">
+<div class="grid grid-cols-2 gap-2">
+<div class="border border-gray-300 rounded-lg p-3 hover:border-[var(--primary-color)] cursor-pointer transition">
+<label class="block text-xs text-gray-500 uppercase font-semibold">Check-in</label>
+<div class="text-gray-900 font-medium">Nov 14, 2023</div>
+</div>
+<div class="border border-gray-300 rounded-lg p-3 hover:border-[var(--primary-color)] cursor-pointer transition">
+<label class="block text-xs text-gray-500 uppercase font-semibold">Check-out</label>
+<div class="text-gray-900 font-medium">Nov 16, 2023</div>
+</div>
+</div>
+<div class="border border-gray-300 rounded-lg p-3 flex justify-between items-center hover:border-[var(--primary-color)] cursor-pointer transition">
+<div>
+<label class="block text-xs text-gray-500 uppercase font-semibold">Guests</label>
+<div class="text-gray-900 font-medium">2 Adults, 0 Children</div>
+</div>
+<span class="material-symbols-outlined text-gray-400">expand_more</span>
+</div>
+</div>
+<div class="pt-4 border-t border-dashed border-gray-200 space-y-2">
+<div class="flex justify-between text-sm text-gray-600">
+<span>¥85,000 x 2 nights</span>
+<span>¥170,000</span>
+</div>
+<div class="flex justify-between text-sm text-gray-600">
+<span>Service charge (10%)</span>
+<span>¥17,000</span>
+</div>
+<div class="flex justify-between text-sm text-green-600 font-medium">
+<span>Member discount</span>
+<span>-¥5,000</span>
+</div>
+</div>
+<div class="pt-4 border-t border-gray-200">
+<div class="flex justify-between items-end mb-4">
+<span class="text-gray-900 font-bold">Total</span>
+<span class="text-2xl font-bold text-[var(--primary-color)]">¥182,000</span>
+</div>
+<button class="w-full bg-[var(--primary-color)] text-white py-3.5 rounded-lg font-bold hover:bg-gray-800 transition shadow-md hover:shadow-lg active:scale-[0.99]">
+                                    Check Availability
+                                </button>
+<p class="text-center text-xs text-gray-400 mt-3">You won't be charged yet</p>
+</div>
+</div>
+</div>
+<div class="bg-gray-50 rounded-xl border border-gray-200 p-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[var(--primary-color)]">support_agent</span>
+</div>
+<div>
+<p class="text-sm font-bold text-gray-900">Need help booking?</p>
+<p class="text-xs text-gray-500">Call our VIP support: <span class="text-[var(--primary-color)] font-medium">+1 800 123 456</span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-[var(--primary-color)] text-white pt-16 pb-8 mt-16">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+<div class="col-span-1 md:col-span-1">
+<div class="flex items-center mb-4">
+<span class="material-symbols-outlined text-white text-3xl mr-2">diamond</span>
+<span class="serif-font text-2xl font-bold">LuxeStays</span>
+</div>
+<p class="text-gray-400 text-sm leading-relaxed">Curated luxury accommodations for the discerning traveler. Experience the extraordinary.</p>
+</div>
+<div>
+<h4 class="font-bold mb-4">Company</h4>
+<ul class="space-y-2 text-sm text-gray-400">
+<li><a class="hover:text-white transition" href="#">About Us</a></li>
+<li><a class="hover:text-white transition" href="#">Careers</a></li>
+<li><a class="hover:text-white transition" href="#">Press</a></li>
+<li><a class="hover:text-white transition" href="#">Blog</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-4">Support</h4>
+<ul class="space-y-2 text-sm text-gray-400">
+<li><a class="hover:text-white transition" href="#">Contact Us</a></li>
+<li><a class="hover:text-white transition" href="#">Terms of Service</a></li>
+<li><a class="hover:text-white transition" href="#">Privacy Policy</a></li>
+<li><a class="hover:text-white transition" href="#">Sitemap</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-4">Newsletter</h4>
+<p class="text-sm text-gray-400 mb-4">Subscribe for exclusive offers and travel inspiration.</p>
+<div class="flex">
+<input class="bg-gray-800 border-none text-white text-sm rounded-l-md px-4 py-2 w-full focus:ring-1 focus:ring-[var(--accent-color)]" placeholder="Your email" type="email"/>
+<button class="bg-[var(--accent-color)] text-white px-4 py-2 rounded-r-md text-sm font-medium hover:bg-yellow-600 transition">Join</button>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-500 text-xs">© 2023 LuxeStays Inc. All rights reserved.</p>
+<div class="flex space-x-4 mt-4 md:mt-0">
+<a class="text-gray-500 hover:text-white" href="#"><span class="text-xs">Twitter</span></a>
+<a class="text-gray-500 hover:text-white" href="#"><span class="text-xs">Instagram</span></a>
+<a class="text-gray-500 hover:text-white" href="#"><span class="text-xs">Facebook</span></a>
+</div>
+</div>
+</div>
+</footer>
+
+</body></html>

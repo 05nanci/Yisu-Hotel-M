@@ -1,171 +1,151 @@
 import { useState, useEffect } from 'react'
-import { View, Text, Image, Button, Radio, RadioGroup, Navigator } from '@tarojs/components'
-import { AtIcon, AtToast } from 'taro-ui'
+import { View, Text, Image, Button, Radio, ScrollView } from '@tarojs/components'
+import { AtIcon, AtToast, AtActivityIndicator } from 'taro-ui'
 import Taro from '@tarojs/taro'
+import { bookingApi, couponApi } from '../../services/api'
 import './index.less'
 
 const PaymentPage = () => {
-  // 页面状态管理
-  const [paymentInfo, setPaymentInfo] = useState({
-    orderTitle: '回坊轩礼精品酒店(西安回民街钟楼地铁站店)',
-    totalAmount: 180.00,
-    discount: '立减2-30元',
-    remainingTime: '00:29:51',
-    paymentMethods: [
-      {
-        id: 'chengpay',
-        name: '程支付',
-        type: 'group',
-        items: [
-          {
-            id: 'new_card',
-            name: '使用新卡支付',
-            tag: '立减2-30元',
-            checked: true
-          },
-          {
-            id: 'add_icbc',
-            name: '添加工商银行信用卡',
-            tag: '最高立减10元',
-            checked: false
-          },
-          {
-            id: 'change_card',
-            name: '换卡支付，支持境外卡',
-            tag: '',
-            checked: false
-          }
-        ]
-      },
-      {
-        id: 'alipay',
-        name: '支付宝支付',
-        icon: 'https://img.icons8.com/color/96/alipay.png',
-        checked: false
-      },
-      {
-        id: 'unionpay',
-        name: '云闪付',
-        icon: 'https://img.icons8.com/color/96/unionpay.png',
-        checked: false
-      },
-      {
-        id: 'more',
-        name: '其他支付方式',
-        checked: false
-      }
-    ],
-    financialServices: [
-      {
-        id: 'naquhua',
-        name: '拿去花 | 信用购',
-        tag: '官方推荐',
-        discount: '立减10元',
-        checked: false,
-        installments: [
-          {
-            id: 'no_installment',
-            name: '不分期',
-            discount: '立减10元',
-            desc: '最长40天免息，0服务费'
-          },
-          {
-            id: 'installment_3',
-            name: '¥58.41 X 3期',
-            discount: '立减10元',
-            desc: '含服务费¥1.74/期'
-          }
-        ]
-      }
-    ]
-  })
+  const [bookingDetail, setBookingDetail] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [coupons, setCoupons] = useState([])
+  const [selectedCoupon, setSelectedCoupon] = useState(null)
+  
+  // Payment methods state (keeping the UI structure)
+  const [paymentMethods] = useState([
+    {
+      id: 'wechat',
+      name: '微信支付',
+      icon: 'https://img.icons8.com/color/96/wechat.png',
+      checked: true
+    },
+    {
+      id: 'alipay',
+      name: '支付宝支付',
+      icon: 'https://img.icons8.com/color/96/alipay.png',
+      checked: false
+    },
+    {
+      id: 'unionpay',
+      name: '云闪付',
+      icon: 'https://img.icons8.com/color/96/unionpay.png',
+      checked: false
+    }
+  ])
+  const [selectedMethod, setSelectedMethod] = useState('wechat')
 
-  const [selectedMethod, setSelectedMethod] = useState('new_card')
-  const [loading, setLoading] = useState(false)
-  const [bookingId, setBookingId] = useState('')
-
-  // 页面加载时获取支付信息
   useEffect(() => {
-    const fetchPaymentInfo = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true)
-        // 从路由参数获取 booking_id
-        const { booking_id } = Taro.getCurrentInstance().router?.params || {}
-        setBookingId(booking_id)
+        const params = Taro.getCurrentInstance().router?.params || {}
+        // Fallback to storage if not in params (for backward compatibility or reload)
+        const storageParams = Taro.getStorageSync('paymentPayload') || {}
+        const bookingId = params.bookingId || storageParams.bookingId
 
-        // 调用 API 获取支付信息
-        const res = await Taro.request({
-          url: `/mobile/payments/${booking_id}/info`,
-          method: 'GET',
-          header: {
-            'Authorization': `Bearer ${Taro.getStorageSync('token')}`
+        if (!bookingId) {
+          Taro.showToast({ title: '参数错误: 缺少订单ID', icon: 'none' })
+          setLoading(false)
+          return
+        }
+
+        // Fetch Booking Detail
+        console.log('Fetching booking detail for:', bookingId)
+        
+        const detailRes = await bookingApi.getBookingDetail(bookingId)
+
+        console.log('Booking detail response:', detailRes)
+
+        if (detailRes && detailRes.code === 0 && detailRes.data) {
+          setBookingDetail(detailRes.data)
+          
+          // If pending, fetch coupons
+          if (detailRes.data.status === 'pending') {
+            fetchCoupons()
           }
-        })
-
-        if (res.data.code === 0) {
-          setPaymentInfo(res.data.data)
         } else {
-          AtToast({ text: '获取支付信息失败', type: 'error' })
+          Taro.showToast({ title: detailRes?.msg || '获取订单详情失败', icon: 'none' })
         }
       } catch (error) {
-        console.error(error)
-        AtToast({ text: '网络异常', type: 'error' })
+        console.error('Fetch error:', error)
+        Taro.showToast({ title: '网络请求失败', icon: 'none' })
       } finally {
         setLoading(false)
       }
     }
 
-    fetchPaymentInfo()
+    fetchData()
   }, [])
 
-  // 选择支付方式
-  const handleSelectMethod = (methodId) => {
-    setSelectedMethod(methodId)
-  }
-
-  // 发起支付
-  const handlePay = async () => {
+  const fetchCoupons = async () => {
     try {
-      setLoading(true)
-      // 先选择支付方式
-      await Taro.request({
-        url: `/mobile/payments/${bookingId}/select-method`,
-        method: 'POST',
-        header: {
-          'Authorization': `Bearer ${Taro.getStorageSync('token')}`
-        },
-        data: {
-          payment_method: selectedMethod
-        }
-      })
-
-      // 发起支付
-      const res = await Taro.request({
-        url: `/mobile/payments/${bookingId}/create`,
-        method: 'POST',
-        header: {
-          'Authorization': `Bearer ${Taro.getStorageSync('token')}`
-        },
-        data: {
-          payment_method: selectedMethod
-        }
-      })
-
-      if (res.data.code === 0) {
-        // 跳转到支付链接或唤起支付
-        const { payUrl } = res.data.data
-        Taro.navigateTo({
-          url: payUrl
-        })
-      } else {
-        AtToast({ text: '发起支付失败', type: 'error' })
+      const res = await couponApi.getCoupons({ type: 'available' })
+      if (res && res.code === 0) {
+        setCoupons(res.data?.coupons || [])
       }
     } catch (error) {
-      console.error(error)
-      AtToast({ text: '网络异常', type: 'error' })
+      console.error('Fetch coupons error:', error)
+    }
+  }
+
+  const handlePay = async () => {
+    if (!bookingDetail) return
+    
+    try {
+      setLoading(true)
+      const paymentData = {
+        booking_id: bookingDetail.id,
+        order_id: bookingDetail.id,
+        payment_method: selectedMethod,
+        transaction_id: `TXN_${Date.now()}` // Simulation
+      }
+      
+      const res = await bookingApi.payBooking(paymentData)
+      
+      if (res && res.code === 0) {
+        Taro.showToast({ title: '支付成功', icon: 'success' })
+        setTimeout(() => {
+          Taro.navigateBack()
+        }, 1500)
+      } else {
+        Taro.showToast({ title: res?.msg || '支付失败', icon: 'none' })
+      }
+    } catch (error) {
+      console.error('Pay error:', error)
+      Taro.showToast({ title: '支付请求失败', icon: 'none' })
     } finally {
       setLoading(false)
     }
+  }
+
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'pending': return '#ff9900'
+      case 'paid': return '#07c160'
+      case 'cancelled': return '#999999'
+      case 'completed': return '#10aeff'
+      default: return '#333'
+    }
+  }
+
+  if (loading && !bookingDetail) {
+    return (
+      <View className='payment-page loading'>
+        <AtActivityIndicator mode='center' content='加载中...' />
+      </View>
+    )
+  }
+
+  if (!bookingDetail) {
+    return (
+      <View className='payment-page empty'>
+        <View className='back-button' onClick={() => Taro.navigateBack()}>
+          <Text className='back-icon'>←</Text>
+          <Text className='back-text'>返回</Text>
+        </View>
+        <Text>未找到订单信息</Text>
+      </View>
+    )
   }
 
   return (
@@ -175,130 +155,94 @@ const PaymentPage = () => {
         <Text className='back-icon'>←</Text>
         <Text className='back-text'>返回</Text>
       </View>
-      {/* 顶部安全收银台 */}
-      <View className='header-section'>
-        <Text className='title'>安全收银台</Text>
-        <Text className='countdown'>剩余时间: {paymentInfo.remainingTime}</Text>
-        <Text className='amount'>¥{paymentInfo.totalAmount.toFixed(2)}</Text>
-        <Text className='discount'>{paymentInfo.discount}</Text>
-        <View className='order-info'>
-          <Text className='order-title'>{paymentInfo.orderTitle}</Text>
-          <AtIcon value='chevron-down' size='16' color='#999' />
-        </View>
-      </View>
 
-      {/* 支付方式 */}
-      <View className='payment-methods-section'>
-        <Text className='section-title'>支付方式</Text>
-
-        {paymentInfo.paymentMethods.map(method => {
-          if (method.type === 'group') {
-            return (
-              <View key={method.id} className='payment-group'>
-                <View className='group-header'>
-                  <AtIcon value='credit-card' size='24' color='#007aff' />
-                  <Text className='group-name'>{method.name}</Text>
-                </View>
-                {method.items.map(item => (
-                  <View
-                    key={item.id}
-                    className={`payment-item ${item.checked ? 'checked' : ''}`}
-                    onClick={() => handleSelectMethod(item.id)}
-                  >
-                    <View className='item-left'>
-                      {item.id === 'new_card' && <AtIcon value='credit-card' size='20' color='#007aff' />}
-                      {item.id === 'add_icbc' && <View className='icbc-icon'>工</View>}
-                      <Text className='item-name'>{item.name}</Text>
-                    </View>
-                    <View className='item-right'>
-                      {item.tag && <Text className='item-tag'>{item.tag}</Text>}
-                      {item.checked && <AtIcon value='check-circle' size='20' color='#007aff' />}
-                      {!item.checked && <AtIcon value='chevron-right' size='16' color='#ccc' />}
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )
-          } else {
-            return (
-              <View
-                key={method.id}
-                className={`payment-item ${method.checked ? 'checked' : ''}`}
-                onClick={() => handleSelectMethod(method.id)}
-              >
-                <View className='item-left'>
-                  {method.icon && <Image className='item-icon' src={method.icon} />}
-                  <Text className='item-name'>{method.name}</Text>
-                </View>
-                <View className='item-right'>
-                  <Radio
-                    checked={method.checked}
-                    onClick={() => handleSelectMethod(method.id)}
-                  />
-                </View>
-              </View>
-            )
-          }
-        })}
-      </View>
-
-      {/* 金融服务 */}
-      <View className='financial-section'>
-        <Text className='section-title'>金融服务</Text>
-        <View className='new-user-banner'>
-          <AtIcon value='gift' size='16' color='#ff976a' />
-          <Text>新人专享，拿去花更优惠</Text>
-          <AtIcon value='info' size='16' color='#999' />
-        </View>
-
-        {paymentInfo.financialServices.map(service => (
-          <View key={service.id} className='financial-item'>
-            <View
-              className={`item-header ${service.checked ? 'checked' : ''}`}
-              onClick={() => handleSelectMethod(service.id)}
-            >
-              <View className='item-left'>
-                <Image className='service-icon' src='https://img.icons8.com/color/96/coin.png' />
-                <View className='service-info'>
-                  <Text className='service-name'>{service.name}</Text>
-                  {service.tag && <Text className='service-tag'>{service.tag}</Text>}
-                </View>
-              </View>
-              <View className='item-right'>
-                <Text className='service-discount'>{service.discount}</Text>
-                <Radio
-                  checked={service.checked}
-                  onClick={() => handleSelectMethod(service.id)}
-                />
-              </View>
+      <ScrollView scrollY className='content-scroll'>
+        {/* 订单详情卡片 */}
+        <View className='booking-detail-card'>
+            <View className='card-header'>
+                <Text className='hotel-name'>{bookingDetail.hotel_name}</Text>
+                <Text className='status-text' style={{color: getStatusColor(bookingDetail.status)}}>
+                    {bookingDetail.status_text}
+                </Text>
             </View>
+            
+            <View className='detail-row'>
+                <Text className='label'>订单号</Text>
+                <Text className='value'>{bookingDetail.order_number}</Text>
+            </View>
+            <View className='detail-row'>
+                <Text className='label'>地址</Text>
+                <Text className='value'>{bookingDetail.hotel_address}</Text>
+            </View>
+            <View className='detail-row'>
+                <Text className='label'>房型</Text>
+                <Text className='value'>{bookingDetail.room_type}</Text>
+            </View>
+            <View className='detail-row'>
+                <Text className='label'>入离日期</Text>
+                <Text className='value'>{bookingDetail.check_in_date} 至 {bookingDetail.check_out_date}</Text>
+            </View>
+            <View className='detail-row'>
+                <Text className='label'>入住人</Text>
+                <Text className='value'>{bookingDetail.contact_name} {bookingDetail.contact_phone}</Text>
+            </View>
+             <View className='detail-row'>
+                <Text className='label'>特殊要求</Text>
+                <Text className='value'>{bookingDetail.special_requests || '无'}</Text>
+            </View>
+             <View className='detail-row'>
+                <Text className='label'>下单时间</Text>
+                <Text className='value'>{new Date(bookingDetail.booked_at).toLocaleString()}</Text>
+            </View>
+            
+            <View className='divider' />
+            
+            <View className='price-row'>
+                <Text className='label'>订单总价</Text>
+                <Text className='price'>¥{bookingDetail.price_detail?.total_price || bookingDetail.total_price}</Text>
+            </View>
+        </View>
 
-            {service.checked && (
-              <View className='installment-options'>
-                {service.installments.map(installment => (
-                  <View key={installment.id} className='installment-item'>
-                    <Text className='installment-name'>{installment.name}</Text>
-                    <Text className='installment-discount'>{installment.discount}</Text>
-                    <Text className='installment-desc'>{installment.desc}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
-          </View>
-        ))}
-      </View>
+        {/* 支付栏 (仅当状态为 pending 时显示) */}
+        {bookingDetail.status === 'pending' && (
+            <View className='payment-section'>
+                {/* 优惠券栏 */}
+                <View className='coupon-section'>
+                    <View className='section-title'>优惠券</View>
+                    <View className='coupon-selector'>
+                        <Text>{coupons.length > 0 ? `${coupons.length}张可用` : '暂无可用优惠券'}</Text>
+                        <AtIcon value='chevron-right' size='16' color='#999' />
+                    </View>
+                </View>
 
-      {/* 底部支付按钮 */}
-      <View className='bottom-bar'>
-        <Button
-          className='pay-btn'
-          onClick={handlePay}
-          loading={loading}
-          disabled={loading}
-        >
-          使用银行卡支付¥{paymentInfo.totalAmount.toFixed(2)}
-        </Button>
-      </View>
+                {/* 支付方式栏 */}
+                <View className='payment-methods'>
+                    <View className='section-title'>支付方式</View>
+                    {paymentMethods.map(method => (
+                        <View 
+                            key={method.id} 
+                            className='payment-method-item'
+                            onClick={() => setSelectedMethod(method.id)}
+                        >
+                            <View className='left'>
+                                <Image src={method.icon} className='method-icon' />
+                                <Text>{method.name}</Text>
+                            </View>
+                            <Radio checked={selectedMethod === method.id} color='#007aff' />
+                        </View>
+                    ))}
+                </View>
+                
+                <Button 
+                    className='pay-button' 
+                    onClick={handlePay}
+                    loading={loading}
+                >
+                    立即支付 ¥{bookingDetail.price_detail?.total_price || bookingDetail.total_price}
+                </Button>
+            </View>
+        )}
+      </ScrollView>
     </View>
   )
 }

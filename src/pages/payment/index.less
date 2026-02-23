@@ -1,7 +1,7 @@
 .payment-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
-  padding-top: 120rpx;
+  background: #f5f5f5;
+  padding-bottom: 40rpx;
 
   .back-button {
     position: fixed;
@@ -10,246 +10,199 @@
     z-index: 100;
     display: flex;
     align-items: center;
-    gap: 8rpx;
-    color: #000;
-    padding: 30rpx 40rpx;
-    background-color: #fff;
-    border-bottom: 1px solid #f0f0f0;
+    gap: 12rpx;
+    color: #333;
+    padding: 32rpx 40rpx;
+    background: #fff;
+    border-bottom: 1rpx solid #e9ecef;
     width: 100%;
-    box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+    box-sizing: border-box;
 
     .back-icon {
       font-size: 36rpx;
+      color: #333;
     }
 
     .back-text {
       font-size: 32rpx;
+      font-weight: 500;
+      color: #333;
     }
 
     &:active {
-      background-color: #f0f0f0;
+      background: #f8f9fa;
     }
   }
+  
+  .content-scroll {
+     height: 100vh;
+     padding-top: 120rpx;
+     box-sizing: border-box;
+  }
 
-  .header-section {
-    background-color: #fff;
-    padding: 40rpx;
-    text-align: center;
-    margin-bottom: 20rpx;
-
-    .title {
-      font-size: 32rpx;
-      color: #333;
-      display: block;
-      margin-bottom: 10rpx;
-    }
-
-    .countdown {
-      font-size: 28rpx;
-      color: #666;
-      display: block;
-      margin-bottom: 30rpx;
-    }
-
-    .amount {
-      font-size: 60rpx;
-      font-weight: bold;
-      color: #333;
-      display: block;
-      margin-bottom: 10rpx;
-    }
-
-    .discount {
-      font-size: 28rpx;
-      color: #ff6b35;
-      display: block;
-      margin-bottom: 20rpx;
-    }
-
-    .order-info {
+  .booking-detail-card {
+    background: #fff;
+    margin: 24rpx;
+    padding: 32rpx;
+    border-radius: 16rpx;
+    box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+    
+    .card-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      gap: 10rpx;
-      font-size: 28rpx;
-      color: #666;
+      margin-bottom: 24rpx;
+      padding-bottom: 24rpx;
+      border-bottom: 1rpx solid #eee;
+      
+      .hotel-name {
+        font-size: 34rpx;
+        font-weight: bold;
+        color: #333;
+        flex: 1;
+        margin-right: 20rpx;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      .status-text {
+        font-size: 28rpx;
+        font-weight: 500;
+        flex-shrink: 0;
+      }
     }
-  }
-
-  .payment-methods-section,
-  .financial-section {
-    background-color: #fff;
-    padding: 40rpx;
-    margin-bottom: 20rpx;
-
-    .section-title {
+    
+    .detail-row {
+      display: flex;
+      margin-bottom: 16rpx;
       font-size: 28rpx;
-      color: #333;
-      margin-bottom: 30rpx;
-      display: block;
+      line-height: 1.5;
+      
+      .label {
+        color: #999;
+        width: 140rpx;
+        flex-shrink: 0;
+      }
+      
+      .value {
+        color: #333;
+        flex: 1;
+      }
     }
-
-    .payment-group {
-      margin-bottom: 30rpx;
-
-      .group-header {
-        display: flex;
-        align-items: center;
-        gap: 15rpx;
-        margin-bottom: 20rpx;
+    
+    .divider {
+      height: 1rpx;
+      background: #eee;
+      margin: 24rpx 0;
+    }
+    
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      .label {
         font-size: 30rpx;
         color: #333;
       }
-    }
-
-    .payment-item,
-    .financial-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20rpx 0;
-      border-bottom: 1px solid #f0f0f0;
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      .item-left {
-        display: flex;
-        align-items: center;
-        gap: 20rpx;
-
-        .item-icon,
-        .service-icon {
-          width: 40rpx;
-          height: 40rpx;
-        }
-
-        .icbc-icon {
-          width: 40rpx;
-          height: 40rpx;
-          background-color: #e6212a;
-          color: #fff;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 24rpx;
-        }
-
-        .item-name {
-          font-size: 30rpx;
-          color: #333;
-        }
-
-        .service-info {
-          .service-name {
-            font-size: 30rpx;
-            color: #333;
-            display: block;
-          }
-
-          .service-tag {
-            background-color: #07c160;
-            color: #fff;
-            padding: 4rpx 12rpx;
-            border-radius: 4rpx;
-            font-size: 22rpx;
-            display: inline-block;
-            margin-top: 4rpx;
-          }
-        }
-      }
-
-      .item-right {
-        display: flex;
-        align-items: center;
-        gap: 15rpx;
-
-        .item-tag {
-          background-color: #fff9e8;
-          color: #ff976a;
-          padding: 4rpx 12rpx;
-          border-radius: 4rpx;
-          font-size: 22rpx;
-        }
-
-        .service-discount {
-          background-color: #fff9e8;
-          color: #ff976a;
-          padding: 4rpx 12rpx;
-          border-radius: 4rpx;
-          font-size: 22rpx;
-        }
-      }
-    }
-
-    .new-user-banner {
-      background-color: #fff9e8;
-      padding: 20rpx;
-      border-radius: 8rpx;
-      display: flex;
-      align-items: center;
-      gap: 10rpx;
-      color: #ff976a;
-      font-size: 28rpx;
-      margin-bottom: 30rpx;
-    }
-
-    .installment-options {
-      padding: 20rpx 0 0 60rpx;
-
-      .installment-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 15rpx 0;
-        border-bottom: 1px solid #f0f0f0;
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        .installment-name {
-          font-size: 28rpx;
-          color: #333;
-        }
-
-        .installment-discount {
-          background-color: #fff9e8;
-          color: #ff976a;
-          padding: 4rpx 12rpx;
-          border-radius: 4rpx;
-          font-size: 22rpx;
-        }
-
-        .installment-desc {
-          font-size: 24rpx;
-          color: #666;
-          margin-top: 4rpx;
-          display: block;
-        }
+      
+      .price {
+        font-size: 40rpx;
+        color: #ff4d4f;
+        font-weight: bold;
       }
     }
   }
+  
+  .payment-section {
+    background: #fff;
+    margin: 24rpx;
+    padding: 32rpx;
+    border-radius: 16rpx;
+    box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+    
+    .section-title {
+        font-size: 30rpx;
+        font-weight: bold;
+        margin-bottom: 24rpx;
+        color: #333;
+    }
 
-  .bottom-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #fff;
-    padding: 20rpx 40rpx;
-    box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+    .coupon-section {
+        margin-bottom: 40rpx;
+        
+        .coupon-selector {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24rpx;
+            background: #f9f9f9;
+            border-radius: 8rpx;
+            font-size: 28rpx;
+            color: #666;
+        }
+    }
+    
+    .payment-methods {
+        margin-bottom: 40rpx;
+        
+        .payment-method-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24rpx 0;
+            border-bottom: 1rpx solid #f5f5f5;
+            
+            &:last-child {
+                border-bottom: none;
+            }
+            
+            .left {
+                display: flex;
+                align-items: center;
+                
+                .method-icon {
+                    width: 48rpx;
+                    height: 48rpx;
+                    margin-right: 24rpx;
+                }
+                
+                text {
+                    font-size: 30rpx;
+                    color: #333;
+                }
+            }
+        }
+    }
+    
+    .pay-button {
+        background: #007aff;
+        color: #fff;
+        border-radius: 44rpx;
+        font-size: 32rpx;
+        margin-top: 24rpx;
+        box-shadow: 0 4rpx 16rpx rgba(0,122,255,0.2);
+        
+        &:active {
+            opacity: 0.9;
+        }
+    }
+  }
 
-    .pay-btn {
-      background-color: #ff976a;
-      color: #fff;
-      border: none;
-      border-radius: 50rpx;
-      padding: 24rpx 60rpx;
-      font-size: 32rpx;
-      width: 100%;
+  /* Loading & Empty states */
+  &.loading, &.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: #999;
+    font-size: 28rpx;
+    padding-top: 0;
+    height: 100vh;
+    
+    .back-button {
+        position: fixed;
     }
   }
 }
